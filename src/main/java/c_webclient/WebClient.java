@@ -1,4 +1,4 @@
-package webclient;
+package c_webclient;
 
 import org.springframework.web.client.RestClientException;
 

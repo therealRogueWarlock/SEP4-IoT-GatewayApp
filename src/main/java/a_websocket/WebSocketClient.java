@@ -1,6 +1,6 @@
-package websocket;
+package a_websocket;
 
-import model.SocketObserver;
+import b_model.SocketObserver;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,11 +8,12 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class WebSocketClient implements WebSocket.Listener, WebSocketCommunication {
-
+	List<SocketObserver> socketObserverList;
 	private final WebSocket server;
 
 	public WebSocketClient(String url) {
@@ -79,8 +80,6 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		                              .thenAccept(System.out::println);
 	}
 
-	;
-
 	//onText()
 	public CompletionStage<?> onText​(WebSocket webSocket, CharSequence data, boolean last) {
 		String indented = null;
@@ -90,10 +89,19 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 			System.out.printf("Error occurred: %s\n", e.getMessage());
 			e.printStackTrace();
 		}
+
+		informObservers(indented);
+
 		System.out.println(indented);
 		webSocket.request(1);
 		return new CompletableFuture().completedFuture("onText() completed.")
 		                              .thenAccept(System.out::println);
+	}
+
+	private void informObservers(String indented) {
+		for (SocketObserver socketObserver : socketObserverList) {
+			socketObserver.receiveData(indented);
+		}
 	}
 
 	// =========================
@@ -106,7 +114,7 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 
 	@Override
 	public void attachObserver(SocketObserver observer) {
-
+		socketObserverList.add(observer);
 	}
 }
 
