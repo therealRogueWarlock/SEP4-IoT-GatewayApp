@@ -16,13 +16,12 @@ public class DeviceMeasurementTest {
 	@BeforeEach
 	public void setup() {
 		deviceMeasurement = new DeviceMeasurement("TestDevice");
-		long epochTime = 1000209600;
-		testMeasurement = new Measurement(new Date(epochTime * 1000), 24.5, 20.5, 2000);
+		testMeasurement = new Measurement("", 24.5, 20.5, 2000);
 	}
 
 	@Test
 	public void testDeviceMeasurementToString() {
-		deviceMeasurement.addMeasurement(testMeasurement);
+		deviceMeasurement.addMeasurements(testMeasurement);
 		Gson gson = new GsonBuilder().setPrettyPrinting()
 		                             .create();
 		String jsonMeasurement = gson.toJson(deviceMeasurement);
@@ -32,7 +31,7 @@ public class DeviceMeasurementTest {
 
 	@Test
 	public void testDeviceMeasurementAddMeasurement() {
-		deviceMeasurement.addMeasurement(testMeasurement);
+		deviceMeasurement.addMeasurements(testMeasurement);
 
 		List<Measurement> addedMeasurements = deviceMeasurement.getMeasurements();
 

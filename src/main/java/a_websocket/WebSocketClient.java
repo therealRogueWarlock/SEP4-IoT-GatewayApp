@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -24,6 +25,8 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		                                        .buildAsync(URI.create(url), this);
 
 		server = ws.join();
+
+		socketObserverList = new ArrayList<>();
 	}
 
 	// Send down-link message to device
@@ -46,8 +49,6 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		webSocket.abort();
 	}
 
-	;
-
 	//onClose()
 	public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
 		System.out.println("WebSocket closed!");
@@ -55,8 +56,6 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		return new CompletableFuture().completedFuture("onClose() completed.")
 		                              .thenAccept(System.out::println);
 	}
-
-	;
 
 	//onPing()
 	public CompletionStage<?> onPing​(WebSocket webSocket, ByteBuffer message) {
@@ -67,8 +66,6 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		return new CompletableFuture().completedFuture("Ping completed.")
 		                              .thenAccept(System.out::println);
 	}
-
-	;
 
 	//onPong()
 	public CompletionStage<?> onPong​(WebSocket webSocket, ByteBuffer message) {
@@ -82,23 +79,27 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 
 	//onText()
 	public CompletionStage<?> onText​(WebSocket webSocket, CharSequence data, boolean last) {
-		String indented = null;
+		// Create a JSON Object for incoming telegram
+		JSONObject jsonObject;
+
 		try {
-			indented = (new JSONObject(data.toString())).toString(4);
+			// Read Data into a JSON Object
+			jsonObject = new JSONObject(data.toString());
+			// Send JSON Object to Observers (Our Server)
+			informObservers(jsonObject);
+			// Print the JSON Object (Debugging Purpose)
+			// System.out.println(jsonObject.toString(4)); // SOUT
 		} catch (JSONException e) {
 			System.out.printf("Error occurred: %s\n", e.getMessage());
 			e.printStackTrace();
 		}
 
-		informObservers(indented);
-
-		System.out.println(indented);
 		webSocket.request(1);
 		return new CompletableFuture().completedFuture("onText() completed.")
 		                              .thenAccept(System.out::println);
 	}
 
-	private void informObservers(String indented) {
+	private void informObservers(JSONObject indented) {
 		for (SocketObserver socketObserver : socketObserverList) {
 			socketObserver.receiveData(indented);
 		}

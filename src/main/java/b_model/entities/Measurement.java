@@ -3,19 +3,19 @@ package b_model.entities;
 import java.util.Date;
 
 public class Measurement {
-	private final Date timestamp;
+	private final String timestamp;
 	private final double temperature;
 	private final double humidity;
 	private final int co2;
 
-	public Measurement(Date timestamp, double temperature, double humidity, int co2) {
+	public Measurement(String timestamp, double temperature, double humidity, int co2) {
 		this.timestamp = timestamp;
 		this.temperature = temperature;
 		this.humidity = humidity;
 		this.co2 = co2;
 	}
 
-	public Date getTimestamp() {
+	public String getTimestamp() {
 		return timestamp;
 	}
 
