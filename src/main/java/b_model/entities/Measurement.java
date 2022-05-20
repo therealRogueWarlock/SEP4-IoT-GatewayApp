@@ -1,7 +1,5 @@
 package b_model.entities;
 
-import java.util.Date;
-
 public class Measurement {
 	private final String timestamp;
 	private final double temperature;

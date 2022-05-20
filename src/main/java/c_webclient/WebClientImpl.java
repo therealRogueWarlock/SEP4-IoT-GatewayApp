@@ -16,12 +16,10 @@ public class WebClientImpl implements WebClient {
 	}
 
 	public static WebClient getInstance() {
-
 		if (instance == null) {
 			instance = new WebClientImpl();
 			return instance;
 		}
-
 		return instance;
 	}
 

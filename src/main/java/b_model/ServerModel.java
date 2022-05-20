@@ -77,6 +77,8 @@ public class ServerModel implements SocketObserver {
 
 		// Debug Print the Device Measurement
 		System.out.println(jsonMeasurementClean); // SOUT
+
+		// TODO: Send the Object through the WebClient to the Web Server
 	}
 
 	private List<Measurement> createMeasurements(String data, long epochTime) {
@@ -116,6 +118,6 @@ public class ServerModel implements SocketObserver {
 	private String epochToTimestamp(long epochTime) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:000'Z'", Locale.ENGLISH);
 
-		return sdf.format(new Date(epochTime * 1000L));
+		return sdf.format(new Date(epochTime));
 	}
 }

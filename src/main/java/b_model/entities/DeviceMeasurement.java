@@ -8,7 +8,14 @@ public class DeviceMeasurement {
 	private final List<Measurement> measurements;
 
 	public DeviceMeasurement(String deviceId) {
-		this.deviceId = deviceId;
+		if ("0004A30B00E7FC50".equals(deviceId)) {
+			this.deviceId = "Marker";
+		} else if ("0004A30B00EDC403".equals(deviceId)) {
+			this.deviceId = "Sander";
+		} else {
+			this.deviceId = deviceId;
+		}
+
 		this.measurements = new ArrayList<>();
 	}
 
@@ -70,7 +77,6 @@ public class DeviceMeasurement {
 
 			idxC = sb.indexOf("_CO2_");
 			sb.replace(idxC, idxC + lenC, "" + measurement.getCo2());
-
 		}
 
 		// Remove leftover comma
