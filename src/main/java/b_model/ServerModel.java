@@ -91,7 +91,7 @@ public class ServerModel implements SocketObserver {
 		String jsonMeasurementClean = DataConverter.toJson(newDeviceMeasurement);
 
 		// Debug Print the Device Measurement
-		ConsoleLogger.clLog(jsonMeasurementClean); // SOUT
+		ConsoleLogger.clDebug(jsonMeasurementClean); // SOUT
 
 		// Send the Object through the WebClient to the Web Server
 		webHandler.addNewMeasurement(newDeviceMeasurement);
