@@ -16,7 +16,7 @@ public class DeviceMeasurementTest {
 	@BeforeEach
 	public void setup() {
 		deviceMeasurement = new DeviceMeasurement("TestDevice");
-		testMeasurement = new Measurement("", 24.5, 20.5, 2000);
+		testMeasurement = new Measurement("", 24.5, 20, 2000);
 	}
 
 	@Test
