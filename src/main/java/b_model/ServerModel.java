@@ -54,6 +54,8 @@ public class ServerModel implements SocketObserver {
 			// If Settings are new, send to the Sending Unit
 			if (newSettings != null) {
 				webSocketCommunication.sendObject(newSettings);
+			} else {
+				System.out.println("> Settings were Null");
 			}
 
 		} catch (JSONException e) {
@@ -71,7 +73,7 @@ public class ServerModel implements SocketObserver {
 		System.out.println("Data Received");
 
 		// Create Device Measurement
-		DeviceMeasurement dm = new DeviceMeasurement(jsonRawMeasurements.getString("EUI"));
+		DeviceMeasurement newDeviceMeasurement = new DeviceMeasurement(jsonRawMeasurements.getString("EUI"));
 
 		// Extrapolate Data into Measurements
 		String data = jsonRawMeasurements.getString("data"); // Temperature, Humidity, CO2
@@ -80,21 +82,22 @@ public class ServerModel implements SocketObserver {
 		long epochTime = jsonRawMeasurements.getLong("ts");
 
 		// Get a converted List of Measurements
-		List<Measurement> newMeasurements = createMeasurements(data, epochTime);
+		List<Measurement> deviceMeasurementInternalList = createMeasurements(data, epochTime);
 
 		// Add Measurement List to Device Measurement
-		dm.addMeasurements(newMeasurements);
+		newDeviceMeasurement.addMeasurements(deviceMeasurementInternalList);
 
 		// Create a printable Json representation of the Device Measurement
-		String jsonMeasurementClean = DataConverter.toJson(dm);
+		String jsonMeasurementClean = DataConverter.toJson(newDeviceMeasurement);
 
 		// Debug Print the Device Measurement
 		System.out.println(jsonMeasurementClean); // SOUT
 
-		// TODO: Send the Object through the WebClient to the Web Server
+		// Send the Object through the WebClient to the Web Server
+		webHandler.addNewMeasurement(newDeviceMeasurement);
 
 		// Return Device ID so the Server can search for New Settings
-		return dm.getDeviceId();
+		return newDeviceMeasurement.getDeviceId();
 	}
 
 	private List<Measurement> createMeasurements(String data, long epochTime) {
