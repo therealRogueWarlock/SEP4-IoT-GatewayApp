@@ -54,7 +54,7 @@ public class ServerModel implements SocketObserver {
 			if (newSettings != null) {
 				webSocketCommunication.sendObject(newSettings);
 			} else {
-				System.out.println("> Settings were Null");
+				System.out.println("> Settings were Null"); // SOUT
 			}
 
 		} catch (JSONException e) {
@@ -69,7 +69,7 @@ public class ServerModel implements SocketObserver {
 		}
 
 		// Debug Print
-		System.out.println("Data Received");
+		System.out.println("Data Received"); // SOUT
 
 		// Create Device Measurement
 		DeviceMeasurement newDeviceMeasurement = new DeviceMeasurement(jsonRawMeasurements.getString("EUI"));
@@ -124,3 +124,4 @@ public class ServerModel implements SocketObserver {
 		return measurementList;
 	}
 }
+

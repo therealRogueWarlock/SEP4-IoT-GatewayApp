@@ -23,7 +23,7 @@ public class WebClientImpl implements WebClient {
 	@Override
 	public Object put(String restUrl, Object obj) throws RestClientException {
 		// Post is used the get back result-- spring put returns void
-		System.out.printf("> Sending to URL: %s\nData\n%s\n", ROOT + restUrl, obj.toString());
+		System.out.printf("> Sending to URL: %s\nData\n%s\n", ROOT + restUrl, obj.toString()); // SOUT
 
 		// HTTP Header
 		HttpHeaders headers = new HttpHeaders();
@@ -33,7 +33,7 @@ public class WebClientImpl implements WebClient {
 		ResponseEntity<String> result;
 		result = rest.exchange(ROOT + restUrl, HttpMethod.POST, new HttpEntity<>(obj, headers), String.class);
 //		result = rest.postForEntity(ROOT + restUrl, obj, String.class);
-		System.out.println("> Data has been sent");
+		System.out.println("> Data has been sent"); // SOUT
 //		return null;
 		return result.getBody();
 	}
