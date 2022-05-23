@@ -1,6 +1,6 @@
 package c_webclient;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,10 +24,18 @@ public class WebClientImpl implements WebClient {
 	public Object put(String restUrl, Object obj) throws RestClientException {
 		// Post is used the get back result-- spring put returns void
 		System.out.printf("> Sending to URL: %s\nData\n%s\n", ROOT + restUrl, obj.toString());
-		ResponseEntity<String> result = rest.postForEntity(ROOT + restUrl, obj, String.class);
-//		System.out.println("> Data has been sent");
-		return null;
-//		return result.getBody();
+
+		// HTTP Header
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		//
+		ResponseEntity<String> result;
+		result = rest.exchange(ROOT + restUrl, HttpMethod.POST, new HttpEntity<>(obj, headers), String.class);
+//		result = rest.postForEntity(ROOT + restUrl, obj, String.class);
+		System.out.println("> Data has been sent");
+//		return null;
+		return result.getBody();
 	}
 
 	@Override

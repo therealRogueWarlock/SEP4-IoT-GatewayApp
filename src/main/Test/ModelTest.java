@@ -2,7 +2,6 @@ import a_websocket.WebSocketClient;
 import b_model.ServerModel;
 import b_model.entities.DeviceMeasurement;
 import b_model.entities.Measurement;
-import c_webclient.WebClientImpl;
 import c_webclient.WebHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +38,7 @@ public class ModelTest {
 		double t = 42.7;
 		double h = 66.6;
 		int c = 1000;
-		Measurement m = new Measurement(ts, t, h, c);
+		Measurement m = new Measurement(ts, t, (int) h, c);
 		DeviceMeasurement dm = new DeviceMeasurement(deviceId);
 		dm.addMeasurements(m);
 

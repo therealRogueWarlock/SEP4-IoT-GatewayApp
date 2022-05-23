@@ -4,26 +4,21 @@ import a_websocket.WebSocketClient;
 import a_websocket.WebSocketCommunication;
 import b_model.entities.DeviceMeasurement;
 import b_model.entities.Measurement;
+import b_model.entities.Settings;
 import c_webclient.WebHandler;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
+import util.DataConverter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ServerModel implements SocketObserver {
 	private final String WEB_SOCKET_URL = "wss://iotnet.teracom.dk/app?token=vnoUhAAAABFpb3RuZXQudGVyYWNvbS5ka2v2Q_l1Fej_TK0VFKubjJQ=";
 	private final WebSocketCommunication webSocketCommunication;
 	private final WebHandler webHandler;
-	private final Gson gson = new GsonBuilder().setPrettyPrinting()
-	                                           .create();
 	private final int expectedMeasurementsPrTelegram;
 
 	public ServerModel(WebHandler webHandler) {
@@ -45,12 +40,22 @@ public class ServerModel implements SocketObserver {
 		}
 
 		try {
+			// Handle the Incoming Data and retrieve the Device ID of the Sending Unit
 			String deviceId = handleData(json);
+
+			// If Device ID is Empty, simply return
 			if ("".equals(deviceId)) {
 				return;
 			}
 
-			webSocketCommunication.sendObject(webHandler.getSettings(deviceId));
+			// Check the Server for new Settings
+			Settings newSettings = webHandler.getSettings(deviceId);
+
+			// If Settings are new, send to the Sending Unit
+			if (newSettings != null) {
+				webSocketCommunication.sendObject(newSettings);
+			}
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -70,21 +75,25 @@ public class ServerModel implements SocketObserver {
 
 		// Extrapolate Data into Measurements
 		String data = jsonRawMeasurements.getString("data"); // Temperature, Humidity, CO2
+
 		// Convert TS to Timestamp with Date
 		long epochTime = jsonRawMeasurements.getLong("ts");
+
 		// Get a converted List of Measurements
 		List<Measurement> newMeasurements = createMeasurements(data, epochTime);
+
 		// Add Measurement List to Device Measurement
 		dm.addMeasurements(newMeasurements);
 
 		// Create a printable Json representation of the Device Measurement
-		String jsonMeasurementClean = gson.toJson(dm);
+		String jsonMeasurementClean = DataConverter.toJson(dm);
 
 		// Debug Print the Device Measurement
 		System.out.println(jsonMeasurementClean); // SOUT
 
 		// TODO: Send the Object through the WebClient to the Web Server
 
+		// Return Device ID so the Server can search for New Settings
 		return dm.getDeviceId();
 	}
 
@@ -97,7 +106,7 @@ public class ServerModel implements SocketObserver {
 
 		// Buffer Variables for Data
 		int tempX10, humidityX100, co2;
-		double temp, humidity;
+		double temp;
 
 		// Fill Loop (Runs the amount of Measurements we expect to see)
 		for (int i = 0; i < expectedMeasurementsPrTelegram; i++) {
@@ -106,25 +115,17 @@ public class ServerModel implements SocketObserver {
 			humidityX100 = Integer.parseInt(data.substring(4, 8), 16);
 			co2 = Integer.parseInt(data.substring(8, 12), 16);
 
-			// Convert Temperature and Humidity to Floats
+			// Convert Temperature a double (Decimal Number)
 			temp = new BigDecimal(tempX10 / 10f).setScale(1, RoundingMode.HALF_UP)
 			                                    .doubleValue();
-			humidity = new BigDecimal(humidityX100 / 100f).setScale(1, RoundingMode.HALF_UP)
-			                                              .doubleValue();
 
 			// Set the new Measurement
-			newMeasurement = new Measurement(epochToTimestamp(epochTime), temp, humidity, co2);
+			newMeasurement = new Measurement(DataConverter.epochToTimestamp(epochTime), temp, humidityX100 / 100, co2);
 
 			// Add new Measurement to temporary List
 			measurementList.add(newMeasurement);
 		}
 
 		return measurementList;
-	}
-
-	private String epochToTimestamp(long epochTime) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:000'Z'", Locale.ENGLISH);
-
-		return sdf.format(new Date(epochTime));
 	}
 }

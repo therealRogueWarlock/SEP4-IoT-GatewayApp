@@ -3,10 +3,10 @@ package b_model.entities;
 public class Measurement {
 	private final String timestamp;
 	private final double temperature;
-	private final double humidity;
+	private final int humidity;
 	private final int co2;
 
-	public Measurement(String timestamp, double temperature, double humidity, int co2) {
+	public Measurement(String timestamp, double temperature, int humidity, int co2) {
 		this.timestamp = timestamp;
 		this.temperature = temperature;
 		this.humidity = humidity;
@@ -21,7 +21,7 @@ public class Measurement {
 		return temperature;
 	}
 
-	public double getHumidity() {
+	public int getHumidity() {
 		return humidity;
 	}
 
