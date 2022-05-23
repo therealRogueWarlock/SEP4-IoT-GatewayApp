@@ -45,7 +45,7 @@ public class DataConverter {
 		                                     .doubleValue();
 
 		// Scale down Humidity
-		h /= 100;
+		h /= 10;
 
 		// Creating a HashMap to Return the Values as Key-Value Pairs
 		Map<String, Number> returnMap = new HashMap<>();
