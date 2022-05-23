@@ -10,10 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import util.DataConverter;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ServerModel implements SocketObserver {
 	private final String WEB_SOCKET_URL = "wss://iotnet.teracom.dk/app?token=vnoUhAAAABFpb3RuZXQudGVyYWNvbS5ka2v2Q_l1Fej_TK0VFKubjJQ=";
@@ -107,23 +106,16 @@ public class ServerModel implements SocketObserver {
 		// Measurement to fill into list
 		Measurement newMeasurement;
 
-		// Buffer Variables for Data
-		int tempX10, humidityX100, co2;
-		double temp;
-
 		// Fill Loop (Runs the amount of Measurements we expect to see)
 		for (int i = 0; i < expectedMeasurementsPrTelegram; i++) {
-			// Get Raw (scaled) Integer Data
-			tempX10 = Integer.parseInt(data.substring(0, 4), 16);
-			humidityX100 = Integer.parseInt(data.substring(4, 8), 16);
-			co2 = Integer.parseInt(data.substring(8, 12), 16);
-
-			// Convert Temperature a double (Decimal Number)
-			temp = new BigDecimal(tempX10 / 10f).setScale(1, RoundingMode.HALF_UP)
-			                                    .doubleValue();
+			// Convert Raw Data into useful Numbers
+			Map<String, Number> dataMap = DataConverter.rawHexStringToMeasurement(data);
 
 			// Set the new Measurement
-			newMeasurement = new Measurement(DataConverter.epochToTimestamp(epochTime), temp, humidityX100 / 100, co2);
+			newMeasurement = new Measurement(DataConverter.epochToTimestamp(epochTime),
+			                                 (double) dataMap.get("temperature"),
+			                                 (int) dataMap.get("humidity"),
+			                                 (int) dataMap.get("co2"));
 
 			// Add new Measurement to temporary List
 			measurementList.add(newMeasurement);
