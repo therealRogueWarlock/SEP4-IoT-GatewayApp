@@ -26,7 +26,11 @@ public class DataConverter {
 	}
 
 	public static String toJson(Object obj) {
-		return gson.toJson(obj);
+		return toJson(obj, obj.getClass());
+	}
+
+	public static String toJson(Object obj, Class<?> dataClass) {
+		return gson.toJson(obj, dataClass);
 	}
 
 	public static Map<String, Number> rawHexStringToMeasurement(String hexString) {

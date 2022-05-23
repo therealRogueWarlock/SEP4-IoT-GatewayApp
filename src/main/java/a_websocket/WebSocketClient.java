@@ -3,6 +3,7 @@ package a_websocket;
 import b_model.SocketObserver;
 import org.json.JSONException;
 import org.json.JSONObject;
+import util.DataConverter;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,8 +15,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class WebSocketClient implements WebSocket.Listener, WebSocketCommunication {
-	List<SocketObserver> socketObserverList;
-	private final WebSocket server;
+	private final List<SocketObserver> socketObserverList;
+	private final WebSocket loraServer;
 
 	public WebSocketClient(String url) {
 
@@ -24,37 +25,9 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		CompletableFuture<WebSocket> ws = client.newWebSocketBuilder()
 		                                        .buildAsync(URI.create(url), this);
 
-		server = ws.join();
+		loraServer = ws.join();
 
 		socketObserverList = new ArrayList<>();
-	}
-
-	// Send down-link message to device
-	// Must be in Json format according to https://github.com/ihavn/IoT_Semester_project/blob/master/LORA_NETWORK_SERVER.md
-	public void sendDownLink(String jsonTelegram) {
-		server.sendText(jsonTelegram, true);
-	}
-
-	//onOpen()
-	public void onOpen(WebSocket webSocket) {
-		// This WebSocket will invoke onText, onBinary, onPing, onPong or onClose methods on the associated listener (i.e. receive methods) up to n more times
-		webSocket.request(1);
-		System.out.println("WebSocket Listener has been opened for requests.");
-	}
-
-	//onError()
-	public void onError​(WebSocket webSocket, Throwable error) {
-		System.out.println("A " + error.getCause() + " exception was thrown.");
-		System.out.println("Message: " + error.getLocalizedMessage());
-		webSocket.abort();
-	}
-
-	//onClose()
-	public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
-		System.out.println("WebSocket closed!");
-		System.out.println("Status:" + statusCode + " Reason: " + reason);
-		return new CompletableFuture().completedFuture("onClose() completed.")
-		                              .thenAccept(System.out::println);
 	}
 
 	//onPing()
@@ -74,6 +47,23 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		System.out.println(message.asCharBuffer()
 		                          .toString());
 		return new CompletableFuture().completedFuture("Pong completed.")
+		                              .thenAccept(System.out::println);
+	}
+
+	//onOpen()
+	@Override
+	public void onOpen(WebSocket webSocket) {
+		// This WebSocket will invoke onText, onBinary, onPing, onPong or onClose methods on the associated listener (i.e. receive methods) up to n more times
+		webSocket.request(1);
+		System.out.println("WebSocket Listener has been opened for requests.");
+	}
+
+	//onClose()
+	@Override
+	public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
+		System.out.println("WebSocket closed!");
+		System.out.println("Status:" + statusCode + " Reason: " + reason);
+		return new CompletableFuture().completedFuture("onClose() completed.")
 		                              .thenAccept(System.out::println);
 	}
 
@@ -99,6 +89,19 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		                              .thenAccept(System.out::println);
 	}
 
+	//onError()
+	public void onError​(WebSocket webSocket, Throwable error) {
+		System.out.println("A " + error.getCause() + " exception was thrown.");
+		System.out.println("Message: " + error.getLocalizedMessage());
+		webSocket.abort();
+	}
+
+	// Send down-link message to device
+	// Must be in Json format according to https://github.com/ihavn/IoT_Semester_project/blob/master/LORA_NETWORK_SERVER.md
+	public void sendDownLink(String jsonTelegram) {
+		loraServer.sendText(jsonTelegram, true);
+	}
+
 	private void informObservers(JSONObject indented) {
 		for (SocketObserver socketObserver : socketObserverList) {
 			socketObserver.receiveData(indented);
@@ -110,7 +113,10 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	// =========================
 	@Override
 	public void sendObject(Object obj) {
-
+		// TODO: Convert Object to Json Telegram needed for Transfer
+		String jsonObject = DataConverter.toJson(obj);
+		System.out.printf("> Attempting to send JSON Telegram to Measuring Unit\n%s\n", jsonObject);
+//		sendDownLink(jsonObject);
 	}
 
 	@Override
