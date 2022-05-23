@@ -102,6 +102,11 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		loraServer.sendText(jsonTelegram, true);
 	}
 
+	/**
+	 * Loop through all the registered Observers, and pass the Json Data to them
+	 *
+	 * @param indented
+	 */
 	private void informObservers(JSONObject indented) {
 		for (SocketObserver socketObserver : socketObserverList) {
 			socketObserver.receiveData(indented);
