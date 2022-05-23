@@ -3,6 +3,7 @@ package c_webclient;
 import org.springframework.http.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import util.ConsoleLogger;
 
 public class WebClientImpl implements WebClient {
 	private static WebClient instance;
@@ -23,7 +24,7 @@ public class WebClientImpl implements WebClient {
 	@Override
 	public Object put(String restUrl, Object obj) throws RestClientException {
 		// Post is used the get back result-- spring put returns void
-		System.out.printf("> Sending to URL: %s\nData\n%s\n", ROOT + restUrl, obj.toString()); // SOUT
+		ConsoleLogger.clLog("Sending to URL: %s\nData\n%s\n", ROOT + restUrl, obj.toString()); // SOUT
 
 		// HTTP Header
 		HttpHeaders headers = new HttpHeaders();
@@ -33,7 +34,7 @@ public class WebClientImpl implements WebClient {
 		ResponseEntity<String> result;
 		result = rest.exchange(ROOT + restUrl, HttpMethod.POST, new HttpEntity<>(obj, headers), String.class);
 //		result = rest.postForEntity(ROOT + restUrl, obj, String.class);
-		System.out.println("> Data has been sent"); // SOUT
+		ConsoleLogger.clLog("Data has been sent to %s", ROOT); // SOUT
 //		return null;
 		return result.getBody();
 	}
@@ -44,7 +45,7 @@ public class WebClientImpl implements WebClient {
 			return rest.postForEntity(ROOT + restUrl, obj, String.class)
 			           .getBody();
 		} catch (RestClientException e) {
-			e.printStackTrace();
+			ConsoleLogger.clWarn(e.getMessage());
 			return null;
 		}
 	}
@@ -52,12 +53,10 @@ public class WebClientImpl implements WebClient {
 	@Override
 	public Object get(String restUrl) throws RestClientException {
 		try {
-
 			return rest.getForEntity(ROOT + restUrl, String.class)
 			           .getBody();
 		} catch (RestClientException e) {
-			// ProjectUtil.testPrint("Could not get " + e.getMessage());
-			e.printStackTrace();
+			ConsoleLogger.clWarn(e.getMessage());
 			return null;
 		}
 	}
@@ -69,8 +68,7 @@ public class WebClientImpl implements WebClient {
 			rest.delete(ROOT + restUrl);
 			return true;
 		} catch (RestClientException e) {
-			// ProjectUtil.testPrint("Could not delete item: " + e.getMessage());
-			e.printStackTrace();
+			ConsoleLogger.clWarn(e.getMessage());
 			return false;
 		}
 	}

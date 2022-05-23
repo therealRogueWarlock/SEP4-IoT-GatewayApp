@@ -12,27 +12,39 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DataConverter {
-	private static final Gson gson = new GsonBuilder().setPrettyPrinting()
+	//	Field Variables
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
 	                                                  .create();
 	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.000'Z'";
 
 	private DataConverter() {
+		// Empty Constructor
 	}
 
+	// Epoch Time Conversion
 	public static String epochToTimestamp(long epochTime) {
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.ENGLISH);
 
 		return sdf.format(new Date(epochTime));
 	}
 
+	// Json Conversion
 	public static String toJson(Object obj) {
 		return toJson(obj, obj.getClass());
 	}
 
 	public static String toJson(Object obj, Class<?> dataClass) {
-		return gson.toJson(obj, dataClass);
+		return GSON.toJson(obj, dataClass);
 	}
 
+	public static Object fromJson(String json, Class<?> objectClass) {
+		if (json == null || objectClass == null) {
+			return null;
+		}
+		return GSON.fromJson(json, objectClass);
+	}
+
+	//	Hex to Decimal Values Conversion
 	public static Map<String, Number> rawHexStringToMeasurement(String hexString) {
 		// Retrieving the Raw Data
 		int tX10, h, c;

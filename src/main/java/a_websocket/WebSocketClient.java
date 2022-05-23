@@ -3,6 +3,7 @@ package a_websocket;
 import b_model.SocketObserver;
 import org.json.JSONException;
 import org.json.JSONObject;
+import util.ConsoleLogger;
 import util.DataConverter;
 
 import java.net.URI;
@@ -33,21 +34,21 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	//onPing()
 	public CompletionStage<?> onPing​(WebSocket webSocket, ByteBuffer message) {
 		webSocket.request(1);
-		System.out.println("Ping: Client ---> Server"); // SOUT
-		System.out.println(message.asCharBuffer()
-		                          .toString()); // SOUT
+		ConsoleLogger.clLog("Ping: Client ---> Server"); // SOUT
+		ConsoleLogger.clLog(message.asCharBuffer()
+		                           .toString()); // SOUT
 		return new CompletableFuture().completedFuture("Ping completed.")
-		                              .thenAccept(System.out::println);
+		                              .thenAccept(ConsoleLogger::clStatus);
 	}
 
 	//onPong()
 	public CompletionStage<?> onPong​(WebSocket webSocket, ByteBuffer message) {
 		webSocket.request(1);
-		System.out.println("Pong: Client ---> Server"); // SOUT
-		System.out.println(message.asCharBuffer()
-		                          .toString()); // SOUT
+		ConsoleLogger.clLog("Pong: Client ---> Server"); // SOUT
+		ConsoleLogger.clLog(message.asCharBuffer()
+		                           .toString()); // SOUT
 		return new CompletableFuture().completedFuture("Pong completed.")
-		                              .thenAccept(System.out::println);
+		                              .thenAccept(ConsoleLogger::clStatus);
 	}
 
 	//onOpen()
@@ -55,16 +56,16 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	public void onOpen(WebSocket webSocket) {
 		// This WebSocket will invoke onText, onBinary, onPing, onPong or onClose methods on the associated listener (i.e. receive methods) up to n more times
 		webSocket.request(1);
-		System.out.println("WebSocket Listener has been opened for requests."); // SOUT
+		ConsoleLogger.clLog("WebSocket Listener has been opened for requests."); // SOUT
 	}
 
 	//onClose()
 	@Override
 	public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
-		System.out.println("WebSocket closed!"); // SOUT
-		System.out.println("Status:" + statusCode + " Reason: " + reason); // SOUT
+		ConsoleLogger.clLog("WebSocket closed!"); // SOUT
+		ConsoleLogger.clLog("Status:" + statusCode + " Reason: " + reason); // SOUT
 		return new CompletableFuture().completedFuture("onClose() completed.")
-		                              .thenAccept(System.out::println);
+		                              .thenAccept(ConsoleLogger::clStatus);
 	}
 
 	//onText()
@@ -78,21 +79,21 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 			// Send JSON Object to Observers (Our Server)
 			informObservers(jsonObject);
 			// Print the JSON Object (Debugging Purpose)
-			// System.out.println(jsonObject.toString(4)); // SOUT
+			// ConsolerLogger.clLog(jsonObject.toString(4)); // SOUT
 		} catch (JSONException e) {
-			System.out.printf("Error occurred: %s\n", e.getMessage()); // SOUT
+			ConsoleLogger.clWarn("Error occurred: %s\n", e.getMessage()); // SOUT
 			e.printStackTrace();
 		}
 
 		webSocket.request(1);
 		return new CompletableFuture().completedFuture("onText() completed.")
-		                              .thenAccept(System.out::println);
+		                              .thenAccept(ConsoleLogger::clStatus);
 	}
 
 	//onError()
 	public void onError​(WebSocket webSocket, Throwable error) {
-		System.out.println("A " + error.getCause() + " exception was thrown."); // SOUT
-		System.out.println("Message: " + error.getLocalizedMessage()); // SOUT
+		ConsoleLogger.clLog("A " + error.getCause() + " exception was thrown."); // SOUT
+		ConsoleLogger.clLog("Message: " + error.getLocalizedMessage()); // SOUT
 		webSocket.abort();
 	}
 
@@ -120,7 +121,7 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	public void sendObject(Object obj) {
 		// TODO: Convert Object to Json Telegram needed for Transfer
 		String jsonObject = DataConverter.toJson(obj);
-		System.out.printf("> Attempting to send JSON Telegram to Measuring Unit\n%s\n", jsonObject); // SOUT
+		ConsoleLogger.clLog("> Attempting to send JSON Telegram to Measuring Unit\n%s\n", jsonObject); // SOUT
 //		sendDownLink(jsonObject);
 	}
 
