@@ -4,7 +4,7 @@ import a_websocket.WebSocketClient;
 import a_websocket.WebSocketCommunication;
 import b_model.entities.DeviceMeasurement;
 import b_model.entities.Measurement;
-import c_webclient.WebClient;
+import c_webclient.WebHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.json.JSONException;
@@ -21,14 +21,14 @@ import java.util.Locale;
 public class ServerModel implements SocketObserver {
 	private final String WEB_SOCKET_URL = "wss://iotnet.teracom.dk/app?token=vnoUhAAAABFpb3RuZXQudGVyYWNvbS5ka2v2Q_l1Fej_TK0VFKubjJQ=";
 	private final WebSocketCommunication webSocketCommunication;
-	private final WebClient webServiceClient;
+	private final WebHandler webHandler;
 	private final Gson gson = new GsonBuilder().setPrettyPrinting()
 	                                           .create();
 	private final int expectedMeasurementsPrTelegram;
 
-	public ServerModel(WebClient webServiceClient) {
+	public ServerModel(WebHandler webHandler) {
 		// Set Server Communications
-		this.webServiceClient = webServiceClient;
+		this.webHandler = webHandler;
 
 		// Create SocketConnection
 		webSocketCommunication = new WebSocketClient(WEB_SOCKET_URL);
@@ -45,16 +45,21 @@ public class ServerModel implements SocketObserver {
 		}
 
 		try {
-			handleData(json);
+			String deviceId = handleData(json);
+			if ("".equals(deviceId)) {
+				return;
+			}
+
+			webSocketCommunication.sendObject(webHandler.getSettings(deviceId));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void handleData(JSONObject jsonRawMeasurements) throws JSONException {
+	private String handleData(JSONObject jsonRawMeasurements) throws JSONException {
 		// Return if Command wasn't RX
 		if (!"rx".equals(jsonRawMeasurements.getString("cmd"))) {
-			return;
+			return "";
 		}
 
 		// Debug Print
@@ -79,6 +84,8 @@ public class ServerModel implements SocketObserver {
 		System.out.println(jsonMeasurementClean); // SOUT
 
 		// TODO: Send the Object through the WebClient to the Web Server
+
+		return dm.getDeviceId();
 	}
 
 	private List<Measurement> createMeasurements(String data, long epochTime) {

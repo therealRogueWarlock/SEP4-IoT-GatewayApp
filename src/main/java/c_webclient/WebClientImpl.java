@@ -6,11 +6,8 @@ import org.springframework.web.client.RestTemplate;
 
 public class WebClientImpl implements WebClient {
 	private static WebClient instance;
-	private final String ROOT = "http://localhost:5000/";
+	private final String ROOT = "http://sep4webapi-env.eba-2fmcgiei.eu-west-1.elasticbeanstalk.com/api/v1";
 	private final RestTemplate rest = new RestTemplate();
-
-	public static final String ADD_URL = "/add";
-	public static final String UPDATE_URL = "/update";
 
 	private WebClientImpl() {
 	}
@@ -25,9 +22,12 @@ public class WebClientImpl implements WebClient {
 
 	@Override
 	public Object put(String restUrl, Object obj) throws RestClientException {
-		//Post is used the get back result-- spring put returns void
+		// Post is used the get back result-- spring put returns void
+		System.out.printf("> Sending to URL: %s\nData\n%s\n", ROOT + restUrl, obj.toString());
 		ResponseEntity<String> result = rest.postForEntity(ROOT + restUrl, obj, String.class);
-		return result.getBody();
+//		System.out.println("> Data has been sent");
+		return null;
+//		return result.getBody();
 	}
 
 	@Override

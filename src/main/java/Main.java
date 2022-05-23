@@ -1,13 +1,11 @@
-import a_websocket.WebSocketClient;
 import b_model.ServerModel;
-import c_webclient.WebClient;
-import c_webclient.WebClientImpl;
+import c_webclient.WebHandler;
 
 public class Main {
 	public static void main(String[] args) {
-		WebClient webClient = WebClientImpl.getInstance();
+		WebHandler webHandler = new WebHandler();
 
-		ServerModel server = new ServerModel(webClient);
+		ServerModel server = new ServerModel(webHandler);
 
 		while (true) {
 			;

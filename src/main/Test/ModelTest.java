@@ -2,8 +2,8 @@ import a_websocket.WebSocketClient;
 import b_model.ServerModel;
 import b_model.entities.DeviceMeasurement;
 import b_model.entities.Measurement;
-import c_webclient.WebClient;
 import c_webclient.WebClientImpl;
+import c_webclient.WebHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
@@ -15,14 +15,14 @@ import static org.mockito.Mockito.mock;
 
 public class ModelTest {
 	static ServerModel serverDataHandler;
-	static WebClient webClient;
+	static WebHandler webHandler;
 	static WebSocketClient webSocket;
 
 	@BeforeAll
 	static void setup() {
-		webClient = mock(WebClientImpl.class);
+		webHandler = mock(WebHandler.class);
 		webSocket = mock(WebSocketClient.class);
-		serverDataHandler = new ServerModel(webClient);
+		serverDataHandler = new ServerModel(webHandler);
 	}
 
 	@BeforeEach
