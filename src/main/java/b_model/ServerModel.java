@@ -86,12 +86,6 @@ public class ServerModel implements SocketObserver {
 		// Add Measurement List to Device Measurement
 		newDeviceMeasurement.addMeasurements(deviceMeasurementInternalList);
 
-		// Create a printable Json representation of the Device Measurement
-		String jsonMeasurementClean = DataConverter.toJson(newDeviceMeasurement);
-
-		// Debug Print the Device Measurement
-		System.out.println(jsonMeasurementClean); // SOUT
-
 		// Send the Object through the WebClient to the Web Server
 		webHandler.addNewMeasurement(newDeviceMeasurement);
 
