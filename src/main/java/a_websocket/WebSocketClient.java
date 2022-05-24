@@ -121,7 +121,8 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	public void sendObject(Object obj) {
 		// TODO: Convert Object to Json Telegram needed for Transfer
 		String jsonObject = DataConverter.toJson(obj);
-		ConsoleLogger.clLog("> Attempting to send JSON Telegram to Measuring Unit\n%s\n", jsonObject); // SOUT
+		ConsoleLogger.clLog("Attempting to send JSON Telegram to Measuring Unit");
+		ConsoleLogger.clLog("Device\n" + jsonObject); // SOUT
 //		sendDownLink(jsonObject);
 	}
 

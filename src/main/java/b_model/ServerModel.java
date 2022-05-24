@@ -55,7 +55,7 @@ public class ServerModel implements SocketObserver {
 			if (newSettings != null) {
 				webSocketCommunication.sendObject(newSettings);
 			} else {
-				ConsoleLogger.clLog("> Settings were Null"); // SOUT
+				ConsoleLogger.clLog("Settings were Null"); // SOUT
 			}
 
 		} catch (JSONException e) {
@@ -91,7 +91,7 @@ public class ServerModel implements SocketObserver {
 		String jsonMeasurementClean = DataConverter.toJson(newDeviceMeasurement);
 
 		// Debug Print the Device Measurement
-		ConsoleLogger.clDebug(jsonMeasurementClean); // SOUT
+//		ConsoleLogger.clDebug(jsonMeasurementClean); // SOUT
 
 		// Send the Object through the WebClient to the Web Server
 		webHandler.addNewMeasurement(newDeviceMeasurement);
@@ -101,7 +101,7 @@ public class ServerModel implements SocketObserver {
 	}
 
 	private List<Measurement> createMeasurements(String data, long epochTime) {
-		ConsoleLogger.clLog("> Creating Measurements"); // SOUT
+		ConsoleLogger.clLog("Creating Measurements"); // SOUT
 		// Initiate temporary List
 		List<Measurement> measurementList = new ArrayList<>();
 		// Measurement to fill into list

@@ -5,7 +5,7 @@ import util.ConsoleLogger;
 public class Main {
 	public static void main(String[] args) {
 		// Debug Mode
-		ConsoleLogger.setDebug(false);
+		ConsoleLogger.setDebug(true);
 
 		WebHandler webHandler = new WebHandler();
 

@@ -24,7 +24,8 @@ public class WebClientImpl implements WebClient {
 	@Override
 	public Object put(String restUrl, Object obj) throws RestClientException {
 		// Post is used the get back result-- spring put returns void
-		ConsoleLogger.clDebug("Sending to URL: %s\nData\n%s\n", ROOT + restUrl, obj.toString()); // SOUT
+		ConsoleLogger.clDebug("Sending to URL: " + ROOT + restUrl); // SOUT
+		ConsoleLogger.clDebug("Data: \n" + obj); // SOUT
 
 		// HTTP Header
 		HttpHeaders headers = new HttpHeaders();
