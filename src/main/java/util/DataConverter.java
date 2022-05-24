@@ -46,11 +46,12 @@ public class DataConverter {
 
 	//	Hex to Decimal Values Conversion
 	public static Map<String, Number> rawHexStringToMeasurement(String hexString) {
+		int len = hexString.length();
 		// Retrieving the Raw Data
 		int tX10, h, c;
-		tX10 = Integer.parseInt(hexString.substring(0, 4), 16);
-		h = Integer.parseInt(hexString.substring(4, 8), 16);
-		c = Integer.parseInt(hexString.substring(8, 12), 16);
+		tX10 = Integer.parseInt(hexString.substring(0, len / 3), 16);
+		h = Integer.parseInt(hexString.substring(len / 3, 2 * len / 3), 16);
+		c = Integer.parseInt(hexString.substring(2 * len / 3, len), 16);
 
 		// Converting Temperature to a Double
 		double t = new BigDecimal(tX10 / 10f).setScale(1, RoundingMode.HALF_UP)
@@ -69,5 +70,33 @@ public class DataConverter {
 
 		// Return HashMap
 		return returnMap;
+	}
+
+	// Hex String to Binary
+	public static String hexToBinary(String hexString) {
+		// StringBuilder for creating the String
+		StringBuilder sb = new StringBuilder();
+
+		// Buffer Variables
+		int v;
+		String s;
+
+		// Looping through the String
+		for (char c : hexString.toCharArray()) {
+			// Set V as the Decimal value of the Hex Value
+			v = Integer.parseInt(String.valueOf(c), 16);
+			// Convert V to Binary Number
+			s = Integer.toBinaryString(v);
+			// Pad front with 0's
+			sb.append(String.format("%4s", s)
+			                .replace(' ', '0'));
+		}
+
+		// Return String
+		return sb.toString();
+	}
+
+	public static int binaryToInteger(String binaryString) {
+		return Integer.valueOf(binaryString, 2);
 	}
 }
