@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static java.lang.String.format;
+
 public class DataConverter {
 	//	Field Variables
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
@@ -74,7 +76,7 @@ public class DataConverter {
 
 	public static String newSettingToRawHexString(Settings newSettings) {
 		// Buffer Variables
-		String tempMarginAsHex, humThresholdAsHex, co2ThresholdAsHex, tempTargetAsHex;
+		String tempTargetAsHex, tempMarginAsHex, humThresholdAsHex, co2ThresholdAsHex;
 		float tempTargetAsFloat;
 
 		// Data Conversion Helpers
@@ -85,18 +87,22 @@ public class DataConverter {
 		tempTargetAsFloat = newSettings.getTargetTemperature();
 		int tempTargetAsInt = (int) (tempTargetAsFloat * 10);
 
-		tempMarginAsHex = String.format(dataFormat, Integer.toHexString(newSettings.getTemperatureMargin())).replace(oldC, newC);
-		humThresholdAsHex = String.format(dataFormat, Integer.toHexString(newSettings.getHumidityThreshold())).replace(oldC, newC);
-		co2ThresholdAsHex = String.format(dataFormat, Integer.toHexString(newSettings.getCo2Threshold())).replace(oldC, newC);
-		tempTargetAsHex = String.format(dataFormat, Integer.toHexString(tempTargetAsInt)).replace(oldC, newC);
+		tempTargetAsHex = format(dataFormat, Integer.toHexString(tempTargetAsInt))
+		                        .replace(oldC, newC);
+		tempMarginAsHex = format(dataFormat, Integer.toHexString(newSettings.getTemperatureMargin()))
+		                        .replace(oldC, newC);
+		humThresholdAsHex = format(dataFormat, Integer.toHexString(newSettings.getHumidityThreshold()))
+		                          .replace(oldC, newC);
+		co2ThresholdAsHex = format(dataFormat, Integer.toHexString(newSettings.getCo2Threshold()))
+		                          .replace(oldC, newC);
 
+		ConsoleLogger.clDebug("tempTargetAsHex -> %s", tempTargetAsHex);
 		ConsoleLogger.clDebug("tempMarginAsHex -> %s", tempMarginAsHex);
 		ConsoleLogger.clDebug("humThresholdAsHex -> %s", humThresholdAsHex);
 		ConsoleLogger.clDebug("co2ThresholdAsHex -> %s", co2ThresholdAsHex);
-		ConsoleLogger.clDebug("tempTargetAsHex -> %s", tempTargetAsHex);
 
 		// Create Final Data String
-		String settingsData = tempMarginAsHex + humThresholdAsHex + co2ThresholdAsHex + tempTargetAsHex;
+		String settingsData = tempTargetAsHex + tempMarginAsHex + humThresholdAsHex + co2ThresholdAsHex;
 
 		// Return Data String
 		return settingsData;
@@ -148,7 +154,7 @@ public class DataConverter {
 			s = Integer.toBinaryString(v);
 
 			// Pad front with 0's
-			sb.append(String.format("%4s", s)
+			sb.append(format("%4s", s)
 			                .replace(' ', '0'));
 		}
 
