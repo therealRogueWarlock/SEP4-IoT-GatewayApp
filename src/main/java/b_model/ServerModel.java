@@ -58,7 +58,7 @@ public class ServerModel implements SocketObserver {
 				String actualDeviceId = DataConverter.deviceIdConverter_nameToEui(deviceId);
 				webSocketCommunication.sendObject(actualDeviceId, newSettings);
 			} else {
-				ConsoleLogger.clLog("Settings were Null"); // SOUT
+				ConsoleLogger.clLog("Settings were Null");
 			}
 
 		} catch (JSONException e) {
@@ -73,7 +73,7 @@ public class ServerModel implements SocketObserver {
 		}
 
 		// Debug Print
-		ConsoleLogger.clLog("Data Received" + jsonRawMeasurements); // SOUT
+		ConsoleLogger.clLog("Data Received" + jsonRawMeasurements);
 
 		// Create Device Measurement
 		DeviceMeasurement newDeviceMeasurement = new DeviceMeasurement(jsonRawMeasurements.getString("EUI"));
@@ -94,7 +94,7 @@ public class ServerModel implements SocketObserver {
 		String jsonMeasurementClean = DataConverter.toJson(newDeviceMeasurement);
 
 		// Debug Print the Device Measurement
-//		ConsoleLogger.clDebug(jsonMeasurementClean); // SOUT
+		ConsoleLogger.clDebug(jsonMeasurementClean);
 
 		// Send the Object through the WebClient to the Web Server
 		webHandler.addNewMeasurement(newDeviceMeasurement);
@@ -104,7 +104,7 @@ public class ServerModel implements SocketObserver {
 	}
 
 	private List<Measurement> createMeasurements(String data, long epochTime) {
-		ConsoleLogger.clLog("Creating Measurements"); // SOUT
+		ConsoleLogger.clLog("Creating Measurements");
 		// Initiate temporary List
 		List<Measurement> measurementList = new ArrayList<>();
 		// Measurement to fill into list

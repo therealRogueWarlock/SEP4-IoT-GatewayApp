@@ -63,6 +63,6 @@ public class ModelTest {
 		// Assert -> Unsure of how to do it, other than print both due to no return values
 		Assertions.assertNotNull(jsonObject);
 		Assertions.assertDoesNotThrow(() -> serverDataHandler.receiveData(finalJsonObject));
-		ConsoleLogger.clLog("Device Measurement -> toString()\n" + dm); // SOUT
+		ConsoleLogger.clLog("Device Measurement -> toString()\n" + dm);
 	}
 }

@@ -35,9 +35,9 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	//onPing()
 	public CompletionStage<?> onPing​(WebSocket webSocket, ByteBuffer message) {
 		webSocket.request(1);
-		ConsoleLogger.clLog("Ping: Client ---> Server"); // SOUT
+		ConsoleLogger.clLog("Ping: Client ---> Server");
 		ConsoleLogger.clLog(message.asCharBuffer()
-		                           .toString()); // SOUT
+		                           .toString());
 		return new CompletableFuture().completedFuture("Ping completed.")
 		                              .thenAccept(ConsoleLogger::clStatus);
 	}
@@ -45,9 +45,9 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	//onPong()
 	public CompletionStage<?> onPong​(WebSocket webSocket, ByteBuffer message) {
 		webSocket.request(1);
-		ConsoleLogger.clLog("Pong: Client ---> Server"); // SOUT
+		ConsoleLogger.clLog("Pong: Client ---> Server");
 		ConsoleLogger.clLog(message.asCharBuffer()
-		                           .toString()); // SOUT
+		                           .toString());
 		return new CompletableFuture().completedFuture("Pong completed.")
 		                              .thenAccept(ConsoleLogger::clStatus);
 	}
@@ -57,14 +57,14 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	public void onOpen(WebSocket webSocket) {
 		// This WebSocket will invoke onText, onBinary, onPing, onPong or onClose methods on the associated listener (i.e. receive methods) up to n more times
 		webSocket.request(1);
-		ConsoleLogger.clLog("WebSocket Listener has been opened for requests."); // SOUT
+		ConsoleLogger.clLog("WebSocket Listener has been opened for requests.");
 	}
 
 	//onClose()
 	@Override
 	public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
-		ConsoleLogger.clLog("WebSocket closed!"); // SOUT
-		ConsoleLogger.clLog("Status:" + statusCode + " Reason: " + reason); // SOUT
+		ConsoleLogger.clLog("WebSocket closed!");
+		ConsoleLogger.clLog("Status:" + statusCode + " Reason: " + reason);
 		return new CompletableFuture().completedFuture("onClose() completed.")
 		                              .thenAccept(ConsoleLogger::clStatus);
 	}
@@ -80,9 +80,9 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 			// Send JSON Object to Observers (Our Server)
 			informObservers(jsonObject);
 			// Print the JSON Object (Debugging Purpose)
-			// ConsolerLogger.clLog(jsonObject.toString(4)); // SOUT
+			 ConsoleLogger.clDebug(jsonObject.toString(4));
 		} catch (JSONException e) {
-			ConsoleLogger.clWarn("Error occurred: %s\n", e.getMessage()); // SOUT
+			ConsoleLogger.clWarn("Error occurred: %s\n", e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -93,8 +93,8 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 
 	//onError()
 	public void onError​(WebSocket webSocket, Throwable error) {
-		ConsoleLogger.clLog("A " + error.getCause() + " exception was thrown."); // SOUT
-		ConsoleLogger.clLog("Message: " + error.getLocalizedMessage()); // SOUT
+		ConsoleLogger.clLog("A " + error.getCause() + " exception was thrown.");
+		ConsoleLogger.clLog("Message: " + error.getLocalizedMessage());
 		webSocket.abort();
 	}
 
@@ -125,7 +125,7 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 
 		String downLinkFormattedSettings = DataConverter.downLinkFormat(deviceId, settingsAsHex);
 
-		ConsoleLogger.clDebug("Attempting to send JSON Telegram to Measuring Unit\n%s\n", downLinkFormattedSettings); // SOUT
+		ConsoleLogger.clDebug("Attempting to send JSON Telegram to Measuring Unit\n%s\n", downLinkFormattedSettings);
 		//sendDownLink(settingsAsHex);
 	}
 
