@@ -107,11 +107,11 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	/**
 	 * Loop through all the registered Observers, and pass the Json Data to them
 	 *
-	 * @param indented
+	 * @param jsonData
 	 */
-	private void informObservers(JSONObject indented) {
+	private void informObservers(JSONObject jsonData) {
 		for (SocketObserver socketObserver : socketObserverList) {
-			socketObserver.receiveData(indented);
+			socketObserver.receiveData(jsonData);
 		}
 	}
 
