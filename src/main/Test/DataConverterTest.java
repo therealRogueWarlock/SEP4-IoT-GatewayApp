@@ -1,3 +1,4 @@
+import b_model.entities.Settings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.DataConverter;
@@ -97,7 +98,7 @@ public class DataConverterTest {
 		String binaryResult = "10100101";
 
 		// Act
-		String binaryString = DataConverter.hexToBinary(hexData);
+		String binaryString = DataConverter.hexToSizedBinary(hexData, 8);
 
 		// Assert
 		Assertions.assertEquals(binaryResult, binaryString);
@@ -114,6 +115,39 @@ public class DataConverterTest {
 
 		// Assert
 		Assertions.assertEquals(expectedValue, actualValue);
+	}
+
+	@Test
+	void integerToSizedBinaryString() {
+		// Arrange
+		int v = 240;
+		int s1 = 8, s2 = 12, s3 = 16;
+		String expectedValue1 = "11110000";
+		String expectedValue2 = "000011110000";
+		String expectedValue3 = "0000000011110000";
+
+		// Act
+		String binaryValue1 = DataConverter.integerToSizedBinaryString(v, s1);
+		String binaryValue2 = DataConverter.integerToSizedBinaryString(v, s2);
+		String binaryValue3 = DataConverter.integerToSizedBinaryString(v, s3);
+
+		// Assert
+		Assertions.assertEquals(expectedValue1, binaryValue1);
+		Assertions.assertEquals(expectedValue2, binaryValue2);
+		Assertions.assertEquals(expectedValue3, binaryValue3);
+	}
+
+	@Test
+	void newSettingToRawHexString() {
+		// Arrange
+		Settings settings = new Settings(25.2, 3, 70, 2000);
+		String expectedValue = "FC034607D0";
+
+		// Act
+		String hexStringSettings = DataConverter.newSettingToRawHexString(settings);
+
+		// Assert
+		Assertions.assertEquals(expectedValue.toLowerCase(), hexStringSettings.toLowerCase());
 	}
 }
 

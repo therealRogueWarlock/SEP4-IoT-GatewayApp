@@ -74,39 +74,48 @@ public class DataConverter {
 		return GSON.fromJson(json, objectClass);
 	}
 
+	public static String integerToSizedBinaryString(int value, int size) {
+		return format("%" + size + "s", Integer.toString(value, 2)).replace(' ', '0');
+	}
+
+	public static String binaryToSizedHex(String binary, int size) {
+		return format("%" + size + "s", Integer.toHexString(Integer.parseInt(binary, 2))).replace(' ', '0');
+	}
+
 	public static String newSettingToRawHexString(Settings newSettings) {
 		// Buffer Variables
 		String tempTargetAsHex, tempMarginAsHex, humThresholdAsHex, co2ThresholdAsHex;
-		float tempTargetAsFloat;
-
-		// Data Conversion Helpers
-		String dataFormat = "%3s";
-		char oldC = ' ', newC = '0';
+		double tempTargetAsFloat;
 
 		// Converting Integer Values to Hex Values, 0 Padding to get Length 3
 		tempTargetAsFloat = newSettings.getTargetTemperature();
 		int tempTargetAsInt = (int) (tempTargetAsFloat * 10);
 
-		tempTargetAsHex = format(dataFormat, Integer.toHexString(tempTargetAsInt))
-		                        .replace(oldC, newC);
-		tempMarginAsHex = format(dataFormat, Integer.toHexString(newSettings.getTemperatureMargin()))
-		                        .replace(oldC, newC);
-		humThresholdAsHex = format(dataFormat, Integer.toHexString(newSettings.getHumidityThreshold()))
-		                          .replace(oldC, newC);
-		co2ThresholdAsHex = format(dataFormat, Integer.toHexString(newSettings.getCo2Threshold()))
-		                          .replace(oldC, newC);
+		String binaryTempTarget = integerToSizedBinaryString(tempTargetAsInt, 8);
+		String binaryTempMargin = integerToSizedBinaryString(newSettings.getTemperatureMargin(), 8);
+		String binaryHumidity = integerToSizedBinaryString(newSettings.getHumidityThreshold(), 8);
+		String binaryCo2 = integerToSizedBinaryString(newSettings.getCo2Threshold(), 16);
 
 		// Debug Prints
-		ConsoleLogger.clDebug("tempTargetAsHex -> %s", tempTargetAsHex);
-		ConsoleLogger.clDebug("tempMarginAsHex -> %s", tempMarginAsHex);
-		ConsoleLogger.clDebug("humThresholdAsHex -> %s", humThresholdAsHex);
-		ConsoleLogger.clDebug("co2ThresholdAsHex -> %s", co2ThresholdAsHex);
+		ConsoleLogger.clDebug("(binary) TempTarget\t->\t%s", binaryTempTarget);
+		ConsoleLogger.clDebug("(binary) TempMargin\t->\t%s", binaryTempMargin);
+		ConsoleLogger.clDebug("(binary) Humidity  \t->\t%s", binaryHumidity);
+		ConsoleLogger.clDebug("(binary) Co2       \t->\t%s", binaryCo2);
 
-		// Create Final Data String
-		String settingsData = tempTargetAsHex + tempMarginAsHex + humThresholdAsHex + co2ThresholdAsHex;
+		// Convert to Hex
+		tempTargetAsHex = binaryToSizedHex(binaryTempTarget, 2);
+		tempMarginAsHex = binaryToSizedHex(binaryTempMargin, 2);
+		humThresholdAsHex = binaryToSizedHex(binaryHumidity, 2);
+		co2ThresholdAsHex = binaryToSizedHex(binaryCo2, 4);
+
+		// Debug Prints
+		ConsoleLogger.clDebug("(Hex) TempTarget\t->\t%s", tempTargetAsHex);
+		ConsoleLogger.clDebug("(Hex) TempMargin\t->\t%s", tempMarginAsHex);
+		ConsoleLogger.clDebug("(Hex) Humidity  \t->\t%s", humThresholdAsHex);
+		ConsoleLogger.clDebug("(Hex) Co2       \t->\t%s", co2ThresholdAsHex);
 
 		// Return Data String
-		return settingsData;
+		return tempTargetAsHex + tempMarginAsHex + humThresholdAsHex + co2ThresholdAsHex;
 	}
 
 	//	Hex to Decimal Values Conversion
@@ -138,7 +147,7 @@ public class DataConverter {
 	}
 
 	// Hex String to Binary
-	public static String hexToBinary(String hexString) {
+	public static String hexToSizedBinary(String hexString, int size) {
 		// StringBuilder for creating the String
 		StringBuilder sb = new StringBuilder();
 
@@ -155,8 +164,7 @@ public class DataConverter {
 			s = Integer.toBinaryString(v);
 
 			// Pad front with 0's
-			sb.append(format("%4s", s)
-			                .replace(' ', '0'));
+			sb.append(format("%" + size + "s", s).replace(' ', '0'));
 		}
 
 		// Return String
