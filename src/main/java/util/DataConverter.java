@@ -96,6 +96,7 @@ public class DataConverter {
 		co2ThresholdAsHex = format(dataFormat, Integer.toHexString(newSettings.getCo2Threshold()))
 		                          .replace(oldC, newC);
 
+		// Debug Prints
 		ConsoleLogger.clDebug("tempTargetAsHex -> %s", tempTargetAsHex);
 		ConsoleLogger.clDebug("tempMarginAsHex -> %s", tempMarginAsHex);
 		ConsoleLogger.clDebug("humThresholdAsHex -> %s", humThresholdAsHex);
