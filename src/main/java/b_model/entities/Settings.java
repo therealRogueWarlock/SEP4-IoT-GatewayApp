@@ -1,36 +1,32 @@
 package b_model.entities;
 
 public class Settings {
-  private int temperatureMargin;
-  private int co2Threshold;
-  private float targetTemperature;
-  private int humidityThreshold;
+	private final float targetTemperature;
+	private final int temperatureMargin;
+	private final int humidityThreshold;
+	private final int co2Threshold;
 
-  public Settings(int temperatureMargin, int co2Threshold, float targetTemperature, int humidityThreshold) {
-    this.temperatureMargin = temperatureMargin;
-    this.co2Threshold = co2Threshold;
-    this.targetTemperature = targetTemperature;
-    this.humidityThreshold = humidityThreshold;
-  }
+	public Settings(float targetTemperature, int temperatureMargin, int humidityThreshold, int co2Threshold) {
+		this.targetTemperature = targetTemperature;
+		this.temperatureMargin = temperatureMargin;
+		this.humidityThreshold = humidityThreshold;
+		this.co2Threshold = co2Threshold;
+	}
 
-  public int getTemperatureMargin()
-  {
-    return temperatureMargin;
-  }
+	public float getTargetTemperature() {
+		return targetTemperature;
+	}
 
-  public int getCo2Threshold()
-  {
-    return co2Threshold;
-  }
+	public int getTemperatureMargin() {
+		return temperatureMargin;
+	}
 
-  public float getTargetTemperature()
-  {
-    return targetTemperature;
-  }
+	public int getHumidityThreshold() {
+		return humidityThreshold;
+	}
 
-  public int getHumidityThreshold()
-  {
-    return humidityThreshold;
-  }
+	public int getCo2Threshold() {
+		return co2Threshold;
+	}
 
 }
