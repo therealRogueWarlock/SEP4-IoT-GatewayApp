@@ -32,6 +32,5 @@ public class WebHandler {
 		String jsonSettings = (String) webClient.get(DEVICES + deviceId + SETTINGS);
 		Settings settings = (Settings) DataConverter.fromJson(jsonSettings, Settings.class);
 		return settings;
-
 	}
 }

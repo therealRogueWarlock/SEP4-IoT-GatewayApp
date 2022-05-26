@@ -74,12 +74,16 @@ public class DataConverter {
 
 	public static String newSettingToRawHexString(Settings newSettings) {
 		String tempMarginAsHex, humThresholdAsHex, co2ThresholdAsHex, tempTargetAsHex;
+		float tempTargetAsFloat;
 
 		//Taking the string from newSettings, and turning them into hex:
+		tempTargetAsFloat = newSettings.getTargetTemperature();
+		int tempTargetAsInt = (int) tempTargetAsFloat * 10;
+
 		tempMarginAsHex = Integer.toHexString(newSettings.getTemperatureMargin());
 		humThresholdAsHex = Integer.toHexString(newSettings.getHumidityThreshold());
 		co2ThresholdAsHex = Integer.toHexString(newSettings.getCo2Threshold());
-		tempTargetAsHex = Integer.toHexString(newSettings.getTargetTemperature());
+		tempTargetAsHex = Integer.toHexString(tempTargetAsInt);
 
 		//Making sure that each hex string has a fixed length of three
 		if (tempMarginAsHex.length() < 3) {
@@ -111,8 +115,6 @@ public class DataConverter {
 		}
 
 		String settingsData = tempMarginAsHex + humThresholdAsHex + co2ThresholdAsHex + tempTargetAsHex;
-
-		System.out.println("\n\nHex string of settings: " + settingsData + "\n\n");
 
 		return settingsData;
 	}

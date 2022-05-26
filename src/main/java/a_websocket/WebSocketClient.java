@@ -123,7 +123,7 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 		// TODO: Convert Object to Json Telegram needed for Transfer
 		String settingsAsHex = DataConverter.newSettingToRawHexString(newSettings);
 		ConsoleLogger.clLog("> Attempting to send JSON Telegram to Measuring Unit\n%s\n", settingsAsHex); // SOUT
-		//sendDownLink(jsonObject);
+		sendDownLink(settingsAsHex);
 	}
 
 	@Override
