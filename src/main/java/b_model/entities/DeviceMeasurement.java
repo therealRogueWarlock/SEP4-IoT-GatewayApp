@@ -1,5 +1,7 @@
 package b_model.entities;
 
+import util.DataConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +10,7 @@ public class DeviceMeasurement {
 	private final List<Measurement> measurements;
 
 	public DeviceMeasurement(String deviceId) {
-		if ("0004A30B00E7FC50".equals(deviceId)) {
-			this.deviceId = "Marker";
-		} else if ("0004A30B00EDC403".equals(deviceId)) {
-			this.deviceId = "Sander";
-		} else {
-			this.deviceId = deviceId;
-		}
-
+		this.deviceId = DataConverter.deviceIdConverter_euiToName(deviceId);
 		this.measurements = new ArrayList<>();
 	}
 

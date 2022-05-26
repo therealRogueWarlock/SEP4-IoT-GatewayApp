@@ -18,8 +18,35 @@ public class DataConverter {
 	                                                  .create();
 	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.000'Z'";
 
+	private static Map<String, String> euiToSimpleName;
+
 	private DataConverter() {
 		// Empty Constructor
+	}
+
+	// Device ID Handlers
+	public static String deviceIdConverter_euiToName(String deviceId) {
+		// Create Default Map
+		if (euiToSimpleName == null) {
+			euiToSimpleName = new HashMap<>();
+			euiToSimpleName.put("0004A30B00E7FC50", "Marker");
+			euiToSimpleName.put("0004A30B00EDC403", "Sander");
+		}
+		// Return Value
+		return euiToSimpleName.getOrDefault(deviceId, deviceId);
+	}
+
+	public static String deviceIdConverter_nameToEui(String deviceId) {
+		// Loop through Keys to find match
+		if (euiToSimpleName != null) {
+			for (String s : euiToSimpleName.keySet()) {
+				if (euiToSimpleName.get(s)
+				                   .equals(deviceId)) {
+					return s;
+				}
+			}
+		}
+		return deviceId;
 	}
 
 	// Epoch Time Conversion
@@ -45,8 +72,7 @@ public class DataConverter {
 		return GSON.fromJson(json, objectClass);
 	}
 
-	public static String newSettingToRawHexString(Settings newSettings)
-	{
+	public static String newSettingToRawHexString(Settings newSettings) {
 		String tempMarginAsHex, humThresholdAsHex, co2ThresholdAsHex, tempTargetAsHex;
 
 		//Taking the string from newSettings, and turning them into hex:
@@ -56,30 +82,33 @@ public class DataConverter {
 		tempTargetAsHex = Integer.toHexString(newSettings.getTargetTemperature());
 
 		//Making sure that each hex string has a fixed length of three
-		if(tempMarginAsHex.length() < 3){
-			for(int i = tempMarginAsHex.length(); i < 3; i++){
+		if (tempMarginAsHex.length() < 3) {
+			for (int i = tempMarginAsHex.length(); i < 3; i++) {
 				tempMarginAsHex = tempMarginAsHex + "p";
 			}
-		} else{}
+		} else {
+		}
 
-		if(humThresholdAsHex.length() < 3){
-			for(int i = humThresholdAsHex.length(); i < 3; i++){
+		if (humThresholdAsHex.length() < 3) {
+			for (int i = humThresholdAsHex.length(); i < 3; i++) {
 				humThresholdAsHex = humThresholdAsHex + "p";
 			}
-		} else{}
+		} else {
+		}
 
-		if(co2ThresholdAsHex.length() < 3){
-			for(int i = co2ThresholdAsHex.length(); i < 3; i++){
+		if (co2ThresholdAsHex.length() < 3) {
+			for (int i = co2ThresholdAsHex.length(); i < 3; i++) {
 				co2ThresholdAsHex = co2ThresholdAsHex + "p";
 			}
-		} else{}
+		} else {
+		}
 
-		if(tempTargetAsHex.length() < 3){
-			for(int i = tempTargetAsHex.length(); i < 3 ; i++){
+		if (tempTargetAsHex.length() < 3) {
+			for (int i = tempTargetAsHex.length(); i < 3; i++) {
 				tempTargetAsHex = tempTargetAsHex + "p";
 			}
-		} else{}
-
+		} else {
+		}
 
 		String settingsData = tempMarginAsHex + humThresholdAsHex + co2ThresholdAsHex + tempTargetAsHex;
 
