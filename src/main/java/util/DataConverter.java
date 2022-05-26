@@ -157,7 +157,7 @@ public class DataConverter {
 		return returnMap;
 	}
 
-	// Hex String to Binary
+	// Hex String to Binary | Useful if Bit Manipulation needs to be done
 	public static String hexToSizedBinary(String hexString, int size) {
 		// StringBuilder for creating the String
 		StringBuilder sb = new StringBuilder();
