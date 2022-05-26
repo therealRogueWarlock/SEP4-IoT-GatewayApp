@@ -42,7 +42,6 @@ public class ServerModel implements SocketObserver {
 		try {
 			// Handle the Incoming Data and retrieve the Device ID of the Sending Unit
 			String deviceId = handleData(json);
-			System.out.println("\n\nDevice ID: " + deviceId + "\n\n");
 
 			// If Device ID is Empty, simply return
 			if ("".equals(deviceId)) {
@@ -52,12 +51,12 @@ public class ServerModel implements SocketObserver {
 			// Check the Server for new Settings
 			Settings newSettings = webHandler.getSettings(deviceId);
 
-			System.out.println("Settings for device " + deviceId + ": \nCO2 Threshold: " + newSettings.getCo2Threshold() + "\nHumidity Threshold: " + newSettings.getHumidityThreshold()
-			+ "\nTarget Temperature: " + newSettings.getTargetTemperature() + "\nTemperature Margin: " + newSettings.getTemperatureMargin());
+			ConsoleLogger.clDebug("Settings for device " + deviceId + ": \nCO2 Threshold: " + newSettings.getCo2Threshold() + "\nHumidity Threshold: " + newSettings.getHumidityThreshold() + "\nTarget Temperature: " + newSettings.getTargetTemperature() + "\nTemperature Margin: " + newSettings.getTemperatureMargin());
 
 			// If Settings are new, send to the Sending Unit
-			if (newSettings != null) {
-				webSocketCommunication.sendObject(newSettings);
+			if (newSettings != null) { // FIXME: Always not null?
+				String actualDeviceId = DataConverter.deviceIdConverter_nameToEui(deviceId);
+				webSocketCommunication.sendObject(actualDeviceId, newSettings);
 			} else {
 				ConsoleLogger.clLog("Settings were Null"); // SOUT
 			}

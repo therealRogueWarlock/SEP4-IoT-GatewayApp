@@ -73,49 +73,32 @@ public class DataConverter {
 	}
 
 	public static String newSettingToRawHexString(Settings newSettings) {
+		// Buffer Variables
 		String tempMarginAsHex, humThresholdAsHex, co2ThresholdAsHex, tempTargetAsHex;
 		float tempTargetAsFloat;
 
-		//Taking the string from newSettings, and turning them into hex:
+		// Data Conversion Helpers
+		String dataFormat = "%3s";
+		char oldC = ' ', newC = '0';
+
+		// Converting Integer Values to Hex Values, 0 Padding to get Length 3
 		tempTargetAsFloat = newSettings.getTargetTemperature();
-		int tempTargetAsInt = (int) tempTargetAsFloat * 10;
+		int tempTargetAsInt = (int) (tempTargetAsFloat * 10);
 
-		tempMarginAsHex = Integer.toHexString(newSettings.getTemperatureMargin());
-		humThresholdAsHex = Integer.toHexString(newSettings.getHumidityThreshold());
-		co2ThresholdAsHex = Integer.toHexString(newSettings.getCo2Threshold());
-		tempTargetAsHex = Integer.toHexString(tempTargetAsInt);
+		tempMarginAsHex = String.format(dataFormat, Integer.toHexString(newSettings.getTemperatureMargin())).replace(oldC, newC);
+		humThresholdAsHex = String.format(dataFormat, Integer.toHexString(newSettings.getHumidityThreshold())).replace(oldC, newC);
+		co2ThresholdAsHex = String.format(dataFormat, Integer.toHexString(newSettings.getCo2Threshold())).replace(oldC, newC);
+		tempTargetAsHex = String.format(dataFormat, Integer.toHexString(tempTargetAsInt)).replace(oldC, newC);
 
-		//Making sure that each hex string has a fixed length of three
-		if (tempMarginAsHex.length() < 3) {
-			for (int i = tempMarginAsHex.length(); i < 3; i++) {
-				tempMarginAsHex = tempMarginAsHex + "p";
-			}
-		} else {
-		}
+		ConsoleLogger.clDebug("tempMarginAsHex -> %s", tempMarginAsHex);
+		ConsoleLogger.clDebug("humThresholdAsHex -> %s", humThresholdAsHex);
+		ConsoleLogger.clDebug("co2ThresholdAsHex -> %s", co2ThresholdAsHex);
+		ConsoleLogger.clDebug("tempTargetAsHex -> %s", tempTargetAsHex);
 
-		if (humThresholdAsHex.length() < 3) {
-			for (int i = humThresholdAsHex.length(); i < 3; i++) {
-				humThresholdAsHex = humThresholdAsHex + "p";
-			}
-		} else {
-		}
-
-		if (co2ThresholdAsHex.length() < 3) {
-			for (int i = co2ThresholdAsHex.length(); i < 3; i++) {
-				co2ThresholdAsHex = co2ThresholdAsHex + "p";
-			}
-		} else {
-		}
-
-		if (tempTargetAsHex.length() < 3) {
-			for (int i = tempTargetAsHex.length(); i < 3; i++) {
-				tempTargetAsHex = tempTargetAsHex + "p";
-			}
-		} else {
-		}
-
+		// Create Final Data String
 		String settingsData = tempMarginAsHex + humThresholdAsHex + co2ThresholdAsHex + tempTargetAsHex;
 
+		// Return Data String
 		return settingsData;
 	}
 
@@ -160,8 +143,10 @@ public class DataConverter {
 		for (char c : hexString.toCharArray()) {
 			// Set V as the Decimal value of the Hex Value
 			v = Integer.parseInt(String.valueOf(c), 16);
+
 			// Convert V to Binary Number
 			s = Integer.toBinaryString(v);
+
 			// Pad front with 0's
 			sb.append(String.format("%4s", s)
 			                .replace(' ', '0'));
@@ -173,5 +158,21 @@ public class DataConverter {
 
 	public static int binaryToInteger(String binaryString) {
 		return Integer.valueOf(binaryString, 2);
+	}
+
+	// Settings Formatting
+	public static String downLinkFormat(String deviceId, String settingsAsHex) {
+		String downLinkTemplate = """
+		                          {
+		                              "cmd":"tx",
+		                              "EUI": [EUI],
+		                              "port": [PORT],
+		                              "confirmed":true,
+		                              "data": [HEXDATA]
+		                          }""";
+
+		downLinkTemplate = downLinkTemplate.replace("[EUI]", deviceId)
+		                                   .replace("[HEXDATA]", settingsAsHex);
+		return downLinkTemplate;
 	}
 }

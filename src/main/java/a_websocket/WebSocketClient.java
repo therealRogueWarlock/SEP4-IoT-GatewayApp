@@ -119,11 +119,14 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	// WEB SOCKET COMMUNICATIONS
 	// =========================
 	@Override
-	public void sendObject(Settings newSettings) {
+	public void sendObject(String deviceId, Settings newSettings) {
 		// TODO: Convert Object to Json Telegram needed for Transfer
 		String settingsAsHex = DataConverter.newSettingToRawHexString(newSettings);
-		ConsoleLogger.clLog("> Attempting to send JSON Telegram to Measuring Unit\n%s\n", settingsAsHex); // SOUT
-		sendDownLink(settingsAsHex);
+
+		String downLinkFormattedSettings = DataConverter.downLinkFormat(deviceId, settingsAsHex);
+
+		ConsoleLogger.clDebug("Attempting to send JSON Telegram to Measuring Unit\n%s\n", downLinkFormattedSettings); // SOUT
+		//sendDownLink(settingsAsHex);
 	}
 
 	@Override
