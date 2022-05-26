@@ -1,12 +1,12 @@
 package b_model.entities;
 
 public class Settings {
-  int temperatureMargin;
-  int co2Threshold;
-  int targetTemperature;
-  int humidityThreshold;
+  private int temperatureMargin;
+  private int co2Threshold;
+  private float targetTemperature;
+  private int humidityThreshold;
 
-  public Settings(int temperatureMargin, int co2Threshold, int targetTemperature, int humidityThreshold) {
+  public Settings(int temperatureMargin, int co2Threshold, float targetTemperature, int humidityThreshold) {
     this.temperatureMargin = temperatureMargin;
     this.co2Threshold = co2Threshold;
     this.targetTemperature = targetTemperature;
@@ -23,7 +23,7 @@ public class Settings {
     return co2Threshold;
   }
 
-  public int getTargetTemperature()
+  public float getTargetTemperature()
   {
     return targetTemperature;
   }
