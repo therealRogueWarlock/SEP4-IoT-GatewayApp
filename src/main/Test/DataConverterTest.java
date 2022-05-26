@@ -130,11 +130,15 @@ public class DataConverterTest {
 		String binaryValue1 = DataConverter.integerToSizedBinaryString(v, s1);
 		String binaryValue2 = DataConverter.integerToSizedBinaryString(v, s2);
 		String binaryValue3 = DataConverter.integerToSizedBinaryString(v, s3);
+		//
+		String binaryValue4 = DataConverter.integerToSizedBinaryString(16, 4);
 
 		// Assert
 		Assertions.assertEquals(expectedValue1, binaryValue1);
 		Assertions.assertEquals(expectedValue2, binaryValue2);
 		Assertions.assertEquals(expectedValue3, binaryValue3);
+		// When Number is too large, default to 1's
+		Assertions.assertEquals("1111", binaryValue4);
 	}
 
 	@Test

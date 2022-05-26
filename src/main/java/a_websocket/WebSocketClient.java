@@ -80,7 +80,7 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 			// Send JSON Object to Observers (Our Server)
 			informObservers(jsonObject);
 			// Print the JSON Object (Debugging Purpose)
-			 ConsoleLogger.clDebug(jsonObject.toString(4));
+			ConsoleLogger.clDebug(jsonObject.toString(4));
 		} catch (JSONException e) {
 			ConsoleLogger.clWarn("Error occurred: %s\n", e.getMessage());
 			e.printStackTrace();
@@ -107,7 +107,7 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	/**
 	 * Loop through all the registered Observers, and pass the Json Data to them
 	 *
-	 * @param jsonData
+	 * @param jsonData Formatted Json Data
 	 */
 	private void informObservers(JSONObject jsonData) {
 		for (SocketObserver socketObserver : socketObserverList) {
@@ -120,7 +120,6 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	// =========================
 	@Override
 	public void sendObject(String deviceId, Settings newSettings) {
-		// TODO: Convert Object to Json Telegram needed for Transfer
 		String settingsAsHex = DataConverter.newSettingToRawHexString(newSettings);
 
 		String downLinkFormattedSettings = DataConverter.downLinkFormat(deviceId, settingsAsHex);

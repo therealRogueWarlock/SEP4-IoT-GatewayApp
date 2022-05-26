@@ -75,7 +75,18 @@ public class DataConverter {
 	}
 
 	public static String integerToSizedBinaryString(int value, int size) {
-		return format("%" + size + "s", Integer.toString(value, 2)).replace(' ', '0');
+/*
+		return (value < Math.pow(2, size)) ? format("%" + size + "s", Integer.toString(value, 2)).replace(' ',
+		                                                                                                  '0') : format("%" + size + "s",
+		                                                                                                                " ").replace(' ',
+		                                                                                                                             '1');
+*/
+		if (value < Math.pow(2, size)) {
+			ConsoleLogger.clDebug("%d < %d", value, (int) Math.pow(2, size));
+			return format("%" + size + "s", Integer.toString(value, 2)).replace(' ', '0');
+		}
+		ConsoleLogger.clDebug("%d >= %d", value, (int) Math.pow(2, size));
+		return format("%" + size + "s", " ").replace(' ', '1');
 	}
 
 	public static String binaryToSizedHex(String binary, int size) {
@@ -164,7 +175,7 @@ public class DataConverter {
 			s = Integer.toBinaryString(v);
 
 			// Pad front with 0's
-			sb.append(format("%" + size + "s", s).replace(' ', '0'));
+			sb.append(format("%" + size / 2 + "s", s).replace(' ', '0'));
 		}
 
 		// Return String
