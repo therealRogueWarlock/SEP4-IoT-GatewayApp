@@ -9,6 +9,7 @@ public class WebHandler {
 
 	// Objects
 	private final String MEASUREMENTS = "/measurements";
+	private final String DEVICES = "/Devices/";
 	private final String SETTINGS = "/settings";
 
 	public WebHandler() {
@@ -22,7 +23,7 @@ public class WebHandler {
 	}
 
 	public Settings getSettings(String deviceId) {
-		String jsonSettings = (String) webClient.get(SETTINGS + deviceId);
+		String jsonSettings = (String) webClient.get(DEVICES + deviceId + SETTINGS);
 		Settings settings = (Settings) DataConverter.fromJson(jsonSettings, Settings.class);
 		return settings;
 	}

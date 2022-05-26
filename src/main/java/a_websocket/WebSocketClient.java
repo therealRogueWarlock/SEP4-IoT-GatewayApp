@@ -1,6 +1,7 @@
 package a_websocket;
 
 import b_model.SocketObserver;
+import b_model.entities.Settings;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.ConsoleLogger;
@@ -118,11 +119,11 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	// WEB SOCKET COMMUNICATIONS
 	// =========================
 	@Override
-	public void sendObject(Object obj) {
+	public void sendObject(Settings newSettings) {
 		// TODO: Convert Object to Json Telegram needed for Transfer
-		String jsonObject = DataConverter.toJson(obj);
-		ConsoleLogger.clLog("> Attempting to send JSON Telegram to Measuring Unit\n%s\n", jsonObject); // SOUT
-//		sendDownLink(jsonObject);
+		String settingsAsHex = DataConverter.newSettingToRawHexString(newSettings);
+		ConsoleLogger.clLog("> Attempting to send JSON Telegram to Measuring Unit\n%s\n", settingsAsHex); // SOUT
+		//sendDownLink(jsonObject);
 	}
 
 	@Override

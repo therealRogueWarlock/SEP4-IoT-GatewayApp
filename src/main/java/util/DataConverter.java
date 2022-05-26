@@ -1,5 +1,6 @@
 package util;
 
+import b_model.entities.Settings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -42,6 +43,49 @@ public class DataConverter {
 			return null;
 		}
 		return GSON.fromJson(json, objectClass);
+	}
+
+	public static String newSettingToRawHexString(Settings newSettings)
+	{
+		String tempMarginAsHex, humThresholdAsHex, co2ThresholdAsHex, tempTargetAsHex;
+
+		//Taking the string from newSettings, and turning them into hex:
+		tempMarginAsHex = Integer.toHexString(newSettings.getTemperatureMargin());
+		humThresholdAsHex = Integer.toHexString(newSettings.getHumidityThreshold());
+		co2ThresholdAsHex = Integer.toHexString(newSettings.getCo2Threshold());
+		tempTargetAsHex = Integer.toHexString(newSettings.getTargetTemperature());
+
+		//Making sure that each hex string has a fixed length of three
+		if(tempMarginAsHex.length() < 3){
+			for(int i = tempMarginAsHex.length(); i < 3; i++){
+				tempMarginAsHex = tempMarginAsHex + "p";
+			}
+		} else{}
+
+		if(humThresholdAsHex.length() < 3){
+			for(int i = humThresholdAsHex.length(); i < 3; i++){
+				humThresholdAsHex = humThresholdAsHex + "p";
+			}
+		} else{}
+
+		if(co2ThresholdAsHex.length() < 3){
+			for(int i = co2ThresholdAsHex.length(); i < 3; i++){
+				co2ThresholdAsHex = co2ThresholdAsHex + "p";
+			}
+		} else{}
+
+		if(tempTargetAsHex.length() < 3){
+			for(int i = tempTargetAsHex.length(); i < 3 ; i++){
+				tempTargetAsHex = tempTargetAsHex + "p";
+			}
+		} else{}
+
+
+		String settingsData = tempMarginAsHex + humThresholdAsHex + co2ThresholdAsHex + tempTargetAsHex;
+
+		System.out.println("\n\nHex string of settings: " + settingsData + "\n\n");
+
+		return settingsData;
 	}
 
 	//	Hex to Decimal Values Conversion
