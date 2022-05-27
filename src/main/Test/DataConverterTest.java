@@ -13,10 +13,12 @@ public class DataConverterTest {
 		long epochTime = 1000L;
 
 		// Act
-		String epochTimestamp = DataConverter.epochToTimestamp(epochTime);
+		String epochTimestampRight = DataConverter.epochToTimestamp(epochTime);
+		String epochTimestampWrong = DataConverter.epochToTimestamp(epochTime + 2000L);
 
 		// Assert
-		Assertions.assertEquals(timestamp, epochTimestamp);
+		Assertions.assertEquals(timestamp, epochTimestampRight);
+		Assertions.assertNotEquals(timestamp, epochTimestampWrong);
 	}
 
 	@Test
@@ -92,6 +94,23 @@ public class DataConverterTest {
 	}
 
 	@Test
+	void rawHexStringToMeasurement_12Values_fail() {
+		// Arrange
+		String rawData = "123456789";
+		double temp = 10; // Scale by .1x as Double
+		int hum = 10; // Scale by .1x as Integer
+		int co2 = 10; // Direct Translation
+
+		// Act
+		Map<String, Number> valueMap = DataConverter.rawHexStringToMeasurement(rawData);
+
+		// Assert
+		Assertions.assertNotEquals(temp, valueMap.get("temperature"));
+		Assertions.assertNotEquals(hum, valueMap.get("humidity"));
+		Assertions.assertNotEquals(co2, valueMap.get("co2"));
+	}
+
+	@Test
 	void hexToBinary() {
 		// Arrange
 		String hexData = "A5";
@@ -102,6 +121,7 @@ public class DataConverterTest {
 
 		// Assert
 		Assertions.assertEquals(binaryResult, binaryString);
+		Assertions.assertNotEquals("00000000", binaryString);
 	}
 
 	@Test
@@ -115,6 +135,7 @@ public class DataConverterTest {
 
 		// Assert
 		Assertions.assertEquals(expectedValue, actualValue);
+		Assertions.assertNotEquals(expectedValue - 100, actualValue);
 	}
 
 	@Test
@@ -139,6 +160,7 @@ public class DataConverterTest {
 		Assertions.assertEquals(expectedValue3, binaryValue3);
 		// When Number is too large, default to 1's
 		Assertions.assertEquals("1111", binaryValue4);
+		Assertions.assertNotEquals("10000", binaryValue4);
 	}
 
 	@Test
@@ -146,12 +168,14 @@ public class DataConverterTest {
 		// Arrange
 		Settings settings = new Settings(25.2, 3, 70, 2000);
 		String expectedValue = "FC034607D0";
+		String unexpectedValue = "1234567890";
 
 		// Act
 		String hexStringSettings = DataConverter.newSettingToRawHexString(settings);
 
 		// Assert
 		Assertions.assertEquals(expectedValue.toLowerCase(), hexStringSettings.toLowerCase());
+		Assertions.assertNotEquals(unexpectedValue.toLowerCase(), hexStringSettings.toLowerCase());
 	}
 }
 
