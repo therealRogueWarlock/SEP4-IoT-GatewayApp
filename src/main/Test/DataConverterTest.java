@@ -60,11 +60,11 @@ public class DataConverterTest {
 	}
 
 	@Test
-	void rawHexStringToMeasurement_3Values() {
+	void rawHexStringToMeasurement_4DigitValue() {
 		// Arrange
-		String rawData = "123";
-		double temp = 0.1; // Scale by .1x as Double
-		int hum = 0; // Scale by .1x as Integer
+		String rawData = "1203";
+		double temp = 10.1; // Scale by .1x as Double
+		int hum = 2; // Scale by .1x as Integer
 		int co2 = 3; // Direct Translation
 
 		// Act
@@ -77,12 +77,12 @@ public class DataConverterTest {
 	}
 
 	@Test
-	void rawHexStringToMeasurement_12Values() {
+	void rawHexStringToMeasurement_8DigitValue() {
 		// Arrange
-		String rawData = "123456789";
-		double temp = 29.1; // Scale by .1x as Double
-		int hum = 111; // Scale by .1x as Integer
-		int co2 = 1929; // Direct Translation
+		String rawData = "12345678";
+		double temp = 11.8;
+		int hum = 52;
+		int co2 = 22136;
 
 		// Act
 		Map<String, Number> valueMap = DataConverter.rawHexStringToMeasurement(rawData);
@@ -94,7 +94,7 @@ public class DataConverterTest {
 	}
 
 	@Test
-	void rawHexStringToMeasurement_12Values_fail() {
+	void rawHexStringToMeasurement_fail() {
 		// Arrange
 		String rawData = "123456789";
 		double temp = 10; // Scale by .1x as Double

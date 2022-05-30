@@ -19,6 +19,7 @@ public class DataConverter {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
 	                                                  .create();
 	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.000'Z'";
+	private static final int temperatureZeroPoint = 10;
 
 	private static Map<String, String> euiToSimpleName;
 
@@ -99,13 +100,13 @@ public class DataConverter {
 		double tempTargetAsFloat;
 
 		// Converting Integer Values to Hex Values, 0 Padding to get Length 3
-		tempTargetAsFloat = newSettings.getTargetTemperature();
+		tempTargetAsFloat = newSettings.targetTemperature();
 		int tempTargetAsInt = (int) (tempTargetAsFloat * 10);
 
 		String binaryTempTarget = integerToSizedBinaryString(tempTargetAsInt, 8);
-		String binaryTempMargin = integerToSizedBinaryString(newSettings.getTemperatureMargin(), 8);
-		String binaryHumidity = integerToSizedBinaryString(newSettings.getHumidityThreshold(), 8);
-		String binaryCo2 = integerToSizedBinaryString(newSettings.getCo2Threshold(), 16);
+		String binaryTempMargin = integerToSizedBinaryString(newSettings.temperatureMargin(), 8);
+		String binaryHumidity = integerToSizedBinaryString(newSettings.humidityThreshold(), 8);
+		String binaryCo2 = integerToSizedBinaryString(newSettings.co2Threshold(), 16);
 
 		// Debug Prints
 		ConsoleLogger.clDebug("(binary) TempTarget\t->\t%s", binaryTempTarget);
@@ -132,18 +133,16 @@ public class DataConverter {
 	//	Hex to Decimal Values Conversion
 	public static Map<String, Number> rawHexStringToMeasurement(String hexString) {
 		int len = hexString.length();
+		int slice = len / 4;
 		// Retrieving the Raw Data
 		int tX10, h, c;
-		tX10 = Integer.parseInt(hexString.substring(0, len / 3), 16);
-		h = Integer.parseInt(hexString.substring(len / 3, 2 * len / 3), 16);
-		c = Integer.parseInt(hexString.substring(2 * len / 3, len), 16);
+		tX10 = Integer.parseInt(hexString.substring(0, slice), 16);
+		h = Integer.parseInt(hexString.substring(slice, slice + slice), 16);
+		c = Integer.parseInt(hexString.substring(2 * slice, len), 16);
 
 		// Converting Temperature to a Double
 		double t = new BigDecimal(tX10 / 10f).setScale(1, RoundingMode.HALF_UP)
-		                                     .doubleValue();
-
-		// Scale down Humidity
-		h /= 10;
+		                                     .doubleValue() + temperatureZeroPoint;
 
 		// Creating a HashMap to Return the Values as Key-Value Pairs
 		Map<String, Number> returnMap = new HashMap<>();
@@ -187,18 +186,19 @@ public class DataConverter {
 	}
 
 	// Settings Formatting
-	public static String downLinkFormat(String deviceId, String settingsAsHex) {
+	public static String downLinkFormat(String deviceId, String port, String settingsAsHex) {
 		String downLinkTemplate = """
 		                          {
-		                              "cmd":"tx",
-		                              "EUI": [EUI],
+		                              "cmd": "tx",
+		                              "EUI": "[EUI]",
 		                              "port": [PORT],
-		                              "confirmed":true,
-		                              "data": [HEXDATA]
+		                              "confirmed": true,
+		                              "data": "[HEXDATA]"
 		                          }""";
 
 		downLinkTemplate = downLinkTemplate.replace("[EUI]", deviceId)
-		                                   .replace("[HEXDATA]", settingsAsHex);
+		                                   .replace("[HEXDATA]", settingsAsHex)
+		                                   .replace("[PORT]", port);
 		return downLinkTemplate;
 	}
 }

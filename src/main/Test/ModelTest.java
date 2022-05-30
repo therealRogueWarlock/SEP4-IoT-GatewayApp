@@ -47,7 +47,7 @@ public class ModelTest {
 		try {
 			jsonObject = new JSONObject("""
                                         {
-                                            "data": "01ab1A0403e8",
+                                            "data": "882e0319882f0319892f0321892f032c8a30034f",
                                             "EUI": "Test Device #1",
                                             "cmd": "rx",
                                             "ts": 1000190800

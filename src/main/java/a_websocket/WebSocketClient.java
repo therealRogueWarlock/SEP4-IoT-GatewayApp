@@ -57,7 +57,7 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	public void onOpen(WebSocket webSocket) {
 		// This WebSocket will invoke onText, onBinary, onPing, onPong or onClose methods on the associated listener (i.e. receive methods) up to n more times
 		webSocket.request(1);
-		ConsoleLogger.clLog("WebSocket Listener has been opened for requests.");
+		ConsoleLogger.clStatus("WebSocket Listener has been opened for requests.");
 	}
 
 	//onClose()
@@ -119,13 +119,14 @@ public class WebSocketClient implements WebSocket.Listener, WebSocketCommunicati
 	// WEB SOCKET COMMUNICATIONS
 	// =========================
 	@Override
-	public void sendObject(String deviceId, Settings newSettings) {
+	public void sendObject(String deviceId, String portNumber, Settings newSettings) {
+		ConsoleLogger.clDebug("Sending new Settings to device: %s\t| Sending on port: %s", deviceId, portNumber);
 		String settingsAsHex = DataConverter.newSettingToRawHexString(newSettings);
 
-		String downLinkFormattedSettings = DataConverter.downLinkFormat(deviceId, settingsAsHex);
+		String downLinkFormattedSettings = DataConverter.downLinkFormat(deviceId, portNumber, settingsAsHex);
 
-		ConsoleLogger.clDebug("Attempting to send JSON Telegram to Measuring Unit\n%s\n", downLinkFormattedSettings);
-		//sendDownLink(settingsAsHex);
+		ConsoleLogger.clLog("Attempting to send JSON Telegram to Measuring Unit\n%s\n", downLinkFormattedSettings);
+		sendDownLink(settingsAsHex);
 	}
 
 	@Override
