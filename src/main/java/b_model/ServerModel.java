@@ -8,9 +8,11 @@ import b_model.entities.Settings;
 import c_webclient.WebHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
+import util.ConsoleLogger;
 import util.DataConverter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ public class ServerModel implements SocketObserver {
 	private final WebSocketCommunication webSocketCommunication;
 	private final WebHandler webHandler;
 	private final int expectedMeasurementsPrTelegram;
+	private final int timeBetweenMeasurements; // In Seconds
 
 	public ServerModel(WebHandler webHandler) {
 		// Set Server Communications
@@ -29,7 +32,8 @@ public class ServerModel implements SocketObserver {
 		webSocketCommunication.attachObserver(this);
 
 		// Set other special Data
-		expectedMeasurementsPrTelegram = 1;
+		expectedMeasurementsPrTelegram = 5;
+		timeBetweenMeasurements = 60;
 	}
 
 	@Override
@@ -40,36 +44,41 @@ public class ServerModel implements SocketObserver {
 
 		try {
 			// Handle the Incoming Data and retrieve the Device ID of the Sending Unit
-			String deviceId = handleData(json);
+			Map<String, String> deviceData = handleData(json);
 
 			// If Device ID is Empty, simply return
-			if ("".equals(deviceId)) {
+			if (deviceData == null) {
 				return;
 			}
 
 			// Check the Server for new Settings
-			Settings newSettings = webHandler.getSettings(deviceId);
+			Settings newSettings = webHandler.getSettings(deviceData.get("deviceId"));
 
 			// If Settings are new, send to the Sending Unit
-			if (newSettings != null) {
-				webSocketCommunication.sendObject(newSettings);
+			if (newSettings != null) { // FIXME: Always not null?
+				ConsoleLogger.clDebug("Settings for device " + deviceData.get("deviceId") + ": \nCO2 Threshold: " + newSettings.getCo2Threshold() + "\nHumidity Threshold: " + newSettings.getHumidityThreshold() + "\nTarget Temperature: " + newSettings.getTargetTemperature() + "\nTemperature Margin: " + newSettings.getTemperatureMargin());
+				String actualDeviceId = DataConverter.deviceIdConverter_nameToEui(deviceData.get("deviceId"));
+				webSocketCommunication.sendObject(actualDeviceId, deviceData.get("port"), newSettings);
 			} else {
-				System.out.println("> Settings were Null"); // SOUT
+				ConsoleLogger.clLog("Settings were Null");
 			}
 
 		} catch (JSONException e) {
-			e.printStackTrace();
+			ConsoleLogger.clWarn(e.getMessage());
 		}
 	}
 
-	private String handleData(JSONObject jsonRawMeasurements) throws JSONException {
+	private Map<String, String> handleData(JSONObject jsonRawMeasurements) throws JSONException {
 		// Return if Command wasn't RX
 		if (!"rx".equals(jsonRawMeasurements.getString("cmd"))) {
-			return "";
+			return null;
 		}
 
+		// Create Return Map
+		Map<String, String> returnMap = new HashMap<>();
+
 		// Debug Print
-		System.out.println("Data Received"); // SOUT
+		ConsoleLogger.clLog("Data Received" + jsonRawMeasurements);
 
 		// Create Device Measurement
 		DeviceMeasurement newDeviceMeasurement = new DeviceMeasurement(jsonRawMeasurements.getString("EUI"));
@@ -90,35 +99,52 @@ public class ServerModel implements SocketObserver {
 		String jsonMeasurementClean = DataConverter.toJson(newDeviceMeasurement);
 
 		// Debug Print the Device Measurement
-		System.out.println(jsonMeasurementClean); // SOUT
+		ConsoleLogger.clDebug(jsonMeasurementClean);
 
 		// Send the Object through the WebClient to the Web Server
 		webHandler.addNewMeasurement(newDeviceMeasurement);
 
+		// Fill return map
+		returnMap.put("deviceId", newDeviceMeasurement.getDeviceId());
+		returnMap.put("port", "" + jsonRawMeasurements.getInt("port"));
+
 		// Return Device ID so the Server can search for New Settings
-		return newDeviceMeasurement.getDeviceId();
+		return returnMap;
 	}
 
 	private List<Measurement> createMeasurements(String data, long epochTime) {
-		System.out.println("> Creating Measurements"); // SOUT
+		ConsoleLogger.clLog("Creating Measurements");
 		// Initiate temporary List
 		List<Measurement> measurementList = new ArrayList<>();
 		// Measurement to fill into list
 		Measurement newMeasurement;
 
+		int len = data.length();
+		int slice = len / expectedMeasurementsPrTelegram;
+
 		// Fill Loop (Runs the amount of Measurements we expect to see)
 		for (int i = 0; i < expectedMeasurementsPrTelegram; i++) {
 			// Convert Raw Data into useful Numbers
-			Map<String, Number> dataMap = DataConverter.rawHexStringToMeasurement(data);
+			String dataSubstring = data.substring(i * slice, (i + 1) * slice);
+
+			ConsoleLogger.clDebug("%d: Data: %s", i, dataSubstring);
+
+			Map<String, Number> dataMap = DataConverter.rawHexStringToMeasurement(dataSubstring);
+
+			// Assumed Measurement Time
+			long assumedTime = epochTime - ((long) (expectedMeasurementsPrTelegram - i) * timeBetweenMeasurements * 1000L);
 
 			// Set the new Measurement
-			newMeasurement = new Measurement(DataConverter.epochToTimestamp(epochTime),
+			newMeasurement = new Measurement(DataConverter.epochToTimestamp(assumedTime),
 			                                 (double) dataMap.get("temperature"),
 			                                 (int) dataMap.get("humidity"),
 			                                 (int) dataMap.get("co2"));
 
 			// Add new Measurement to temporary List
 			measurementList.add(newMeasurement);
+
+			// Logging Data
+			ConsoleLogger.clLog(newMeasurement.toString());
 		}
 
 		return measurementList;

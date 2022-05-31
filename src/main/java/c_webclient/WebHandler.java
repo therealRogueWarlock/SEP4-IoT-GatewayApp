@@ -2,6 +2,7 @@ package c_webclient;
 
 import b_model.entities.DeviceMeasurement;
 import b_model.entities.Settings;
+import org.springframework.web.client.RestClientException;
 import util.DataConverter;
 
 public class WebHandler {
@@ -9,6 +10,7 @@ public class WebHandler {
 
 	// Objects
 	private final String MEASUREMENTS = "/measurements";
+	private final String DEVICES = "/Devices/";
 	private final String SETTINGS = "/settings";
 
 	public WebHandler() {
@@ -18,10 +20,17 @@ public class WebHandler {
 	public void addNewMeasurement(DeviceMeasurement measurements) {
 		// Call the Put for the new Measurement to the Database Web Service
 		String jsonFormat = DataConverter.toJson(measurements);
-		webClient.put(MEASUREMENTS, jsonFormat);
+		try {
+			webClient.put(MEASUREMENTS, jsonFormat);
+		} catch (RestClientException restClientException) {
+			restClientException.printStackTrace();
+		}
+
 	}
 
 	public Settings getSettings(String deviceId) {
-		return null;
+		String jsonSettings = (String) webClient.get(DEVICES + deviceId + SETTINGS);
+		Settings settings = (Settings) DataConverter.fromJson(jsonSettings, Settings.class);
+		return settings;
 	}
 }

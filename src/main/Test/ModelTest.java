@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import util.ConsoleLogger;
 
 import static org.mockito.Mockito.mock;
 
@@ -45,13 +46,13 @@ public class ModelTest {
 		JSONObject jsonObject = null;
 		try {
 			jsonObject = new JSONObject("""
-			                            {
-			                            	"data": "01ab1A0403e8",
-			                            	"EUI": "Test Device #1",
-			                            	"cmd": "rx",
-			                            	"ts": 1000190800
-			                                                 }
-			                            """);
+                                        {
+                                            "data": "882e0319882f0319892f0321892f032c8a30034f",
+                                            "EUI": "Test Device #1",
+                                            "cmd": "rx",
+                                            "ts": 1000190800
+                                                             }
+                                        """);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -62,6 +63,6 @@ public class ModelTest {
 		// Assert -> Unsure of how to do it, other than print both due to no return values
 		Assertions.assertNotNull(jsonObject);
 		Assertions.assertDoesNotThrow(() -> serverDataHandler.receiveData(finalJsonObject));
-		System.out.println("Device Measurement -> toString()\n" + dm); // SOUT
+		ConsoleLogger.clLog("Device Measurement -> toString()" + dm);
 	}
 }

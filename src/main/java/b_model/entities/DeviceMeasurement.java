@@ -1,5 +1,7 @@
 package b_model.entities;
 
+import util.DataConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +10,7 @@ public class DeviceMeasurement {
 	private final List<Measurement> measurements;
 
 	public DeviceMeasurement(String deviceId) {
-		if ("0004A30B00E7FC50".equals(deviceId)) {
-			this.deviceId = "Marker";
-		} else if ("0004A30B00EDC403".equals(deviceId)) {
-			this.deviceId = "Sander";
-		} else {
-			this.deviceId = deviceId;
-		}
-
+		this.deviceId = DataConverter.deviceIdConverter_euiToName(deviceId);
 		this.measurements = new ArrayList<>();
 	}
 
@@ -67,16 +62,16 @@ public class DeviceMeasurement {
 			// Get Index of Placeholders
 			// Replace Placeholders with Actual Values
 			idxTs = sb.indexOf("_TIMESTAMP_");
-			sb.replace(idxTs, idxTs + lenTs, "" + measurement.getTimestamp());
+			sb.replace(idxTs, idxTs + lenTs, "" + measurement.timestamp());
 
 			idxT = sb.indexOf("_TEMPERATURE_");
-			sb.replace(idxT, idxT + lenT, "" + measurement.getTemperature());
+			sb.replace(idxT, idxT + lenT, "" + measurement.temperature());
 
 			idxH = sb.indexOf("_HUMIDITY_");
-			sb.replace(idxH, idxH + lenH, "" + measurement.getHumidity());
+			sb.replace(idxH, idxH + lenH, "" + measurement.humidity());
 
 			idxC = sb.indexOf("_CO2_");
-			sb.replace(idxC, idxC + lenC, "" + measurement.getCo2());
+			sb.replace(idxC, idxC + lenC, "" + measurement.co2());
 		}
 
 		// Remove leftover comma
