@@ -56,7 +56,7 @@ public class ServerModel implements SocketObserver {
 
 			// If Settings are new, send to the Sending Unit
 			if (newSettings != null) { // FIXME: Always not null?
-				ConsoleLogger.clDebug("Settings for device " + deviceData.get("deviceId") + ": \nCO2 Threshold: " + newSettings.co2Threshold() + "\nHumidity Threshold: " + newSettings.humidityThreshold() + "\nTarget Temperature: " + newSettings.targetTemperature() + "\nTemperature Margin: " + newSettings.temperatureMargin());
+				ConsoleLogger.clDebug("Settings for device " + deviceData.get("deviceId") + ": \nCO2 Threshold: " + newSettings.getCo2Threshold() + "\nHumidity Threshold: " + newSettings.getHumidityThreshold() + "\nTarget Temperature: " + newSettings.getTargetTemperature() + "\nTemperature Margin: " + newSettings.getTemperatureMargin());
 				String actualDeviceId = DataConverter.deviceIdConverter_nameToEui(deviceData.get("deviceId"));
 				webSocketCommunication.sendObject(actualDeviceId, deviceData.get("port"), newSettings);
 			} else {

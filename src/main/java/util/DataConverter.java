@@ -100,13 +100,13 @@ public class DataConverter {
 		double tempTargetAsFloat;
 
 		// Converting Integer Values to Hex Values, 0 Padding to get Length 3
-		tempTargetAsFloat = newSettings.targetTemperature();
+		tempTargetAsFloat = newSettings.getTargetTemperature();
 		int tempTargetAsInt = (int) (tempTargetAsFloat * 10);
 
 		String binaryTempTarget = integerToSizedBinaryString(tempTargetAsInt, 8);
-		String binaryTempMargin = integerToSizedBinaryString(newSettings.temperatureMargin(), 8);
-		String binaryHumidity = integerToSizedBinaryString(newSettings.humidityThreshold(), 8);
-		String binaryCo2 = integerToSizedBinaryString(newSettings.co2Threshold(), 16);
+		String binaryTempMargin = integerToSizedBinaryString(newSettings.getTemperatureMargin(), 8);
+		String binaryHumidity = integerToSizedBinaryString(newSettings.getHumidityThreshold(), 8);
+		String binaryCo2 = integerToSizedBinaryString(newSettings.getCo2Threshold(), 16);
 
 		// Debug Prints
 		ConsoleLogger.clDebug("(binary) TempTarget\t->\t%s", binaryTempTarget);
